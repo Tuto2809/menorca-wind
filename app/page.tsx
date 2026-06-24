@@ -12,7 +12,8 @@ const COMPASS: Record<string, string> = { N:"↓", NE:"↙", E:"←", SE:"↖", 
 interface AgendaEvent { title: string; url: string; date: string; place: string; }
 
 function openMaps(lat: number, lon: number, name: string) {
-  const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}&query_place_id=${encodeURIComponent(name)}`;
+  // This format works on both mobile (opens app) and desktop
+  const url = `https://www.google.com/maps?q=${lat},${lon}&z=16&label=${encodeURIComponent(name)}`;
   window.open(url, "_blank");
 }
 
