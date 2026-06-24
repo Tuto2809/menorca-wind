@@ -1,10 +1,10 @@
 export type Lang = "ca" | "es" | "en" | "fr";
 
 export const LANG_FLAGS: Record<Lang, string> = {
-  ca: "🏴󠁥󠁳󠁣󠁴󠁿",
-  es: "🇪🇸",
-  en: "🇬🇧",
-  fr: "🇫🇷",
+  ca: "CA",
+  es: "ES",
+  en: "EN",
+  fr: "FR",
 };
 
 export const LANG_LABELS: Record<Lang, string> = {
