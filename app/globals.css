@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #1D9E75;
+  --color-primary-dark: #0F6E56;
+  --color-primary-light: #E1F5EE;
+  --color-rain: #E6F1FB;
+  --color-rain-text: #0C447C;
+  --color-sun: #FAEEDA;
+  --color-sun-text: #633806;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8faf9;
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e8e8e8;
+  padding: 1.25rem;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #888;
+  margin-bottom: 10px;
+}
