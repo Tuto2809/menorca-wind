@@ -63,7 +63,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Menorca's longest beach. Fine sand, shallow waters and full services. Perfect for families with young children.",
     descriptionFr: "La plus longue plage de Minorque. Sable fin, eaux peu profondes et tous les services. Parfaite pour les familles.",
     parking: true, services: ["Chiringuito", "Salvamento", "Accesible", "Duchas", "Parking"],
-    lat: 39.8724, lon: 3.9876,
+    lat: 39.8993, lon: 4.0786,
   },
   {
     name: "Santo Tomàs",
@@ -74,7 +74,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Quiet beach with fine sand and discreet development. Clean waters with little wave action. Very comfortable and well-equipped.",
     descriptionFr: "Plage tranquille au sable fin. Eaux propres et peu agitées. Très confortable et bien équipée.",
     parking: true, services: ["Chiringuito", "Salvamento", "Duchas", "Parking"],
-    lat: 39.9003, lon: 4.0201,
+    lat: 39.8992, lon: 4.0189,
   },
   {
     name: "Son Saura",
@@ -85,7 +85,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Double wild cove surrounded by pine trees. Crystal-clear, intensely turquoise waters. Accessed by dirt track, no services but stunning beauty.",
     descriptionFr: "Double crique sauvage entourée de pins. Eaux cristallines d'un turquoise intense. Accès par piste de terre, sans services mais d'une grande beauté.",
     parking: true, services: ["Parking"],
-    lat: 39.9069, lon: 3.8364,
+    lat: 39.9064, lon: 3.8369,
   },
   {
     name: "Macarella",
@@ -96,7 +96,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "One of Menorca's most spectacular coves. White cliffs, ancient pines and breathtaking emerald-coloured water.",
     descriptionFr: "L'une des criques les plus spectaculaires de Minorque. Falaises blanches, pins centenaires et eau couleur émeraude à couper le souffle.",
     parking: false, services: ["Chiringuito"],
-    lat: 39.9014, lon: 3.8236,
+    lat: 39.9011, lon: 3.8236,
   },
   {
     name: "Macarelleta",
@@ -107,7 +107,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Small nudist cove, twin of Macarella, 10 minutes on foot. Very sheltered and quiet, with the same spectacular water colour.",
     descriptionFr: "Petite crique nudiste jumelle de Macarella, à 10 minutes à pied. Très abritée et tranquille, avec les mêmes eaux spectaculaires.",
     parking: false, services: [],
-    lat: 39.8997, lon: 3.8219,
+    lat: 39.8989, lon: 3.8214,
   },
   {
     name: "Cala Galdana",
@@ -118,7 +118,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Known as the 'queen of the coves'. Perfectly semicircular bay surrounded by cliffs and pines. Very calm waters, ideal for children.",
     descriptionFr: "Connue comme la 'reine des criques'. Baie parfaitement semi-circulaire entourée de falaises et de pins. Eaux très calmes, idéale pour les enfants.",
     parking: true, services: ["Chiringuito", "Salvamento", "Kayak", "Duchas", "Parking"],
-    lat: 39.9358, lon: 3.9567,
+    lat: 39.9358, lon: 3.9572,
   },
   {
     name: "Cala en Turqueta",
@@ -129,7 +129,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Wild cove with extraordinarily clear blue-green waters. Surrounded by pines, with fine white sand. Walking access from parking area.",
     descriptionFr: "Crique sauvage aux eaux extraordinairement transparentes bleu-vert. Entourée de pins, sable blanc et fin. Accès à pied depuis le parking.",
     parking: true, services: ["Parking"],
-    lat: 39.9028, lon: 3.8411,
+    lat: 39.9031, lon: 3.8408,
   },
   {
     name: "Binigaus",
@@ -140,7 +140,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Long, wild nudist beach, only accessible on foot (20 min). No services but offering unbeatable solitude and nature in summer.",
     descriptionFr: "Longue plage nudiste sauvage, accessible uniquement à pied (20 min). Sans services mais offrant une solitude et une nature incomparables.",
     parking: false, services: [],
-    lat: 39.9047, lon: 4.0394,
+    lat: 39.9044, lon: 4.0397,
   },
   {
     name: "Cala Pregonda",
@@ -151,7 +151,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Hidden gem with uniquely reddish sand. Surrounded by islets and dunes. Only accessible on foot (40 min) or by boat. Lunar landscape.",
     descriptionFr: "Joyau caché au sable rougeâtre unique à Minorque. Entourée d'îlots et de dunes. Accessible uniquement à pied (40 min) ou en bateau.",
     parking: false, services: [],
-    lat: 40.0633, lon: 3.9736,
+    lat: 40.0628, lon: 3.9711,
   },
   {
     name: "Cala Tirant",
@@ -162,7 +162,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Favourite beach for kitesurf and windsurf lovers thanks to its constant winds. Light sand and shallow waters. Sporty atmosphere.",
     descriptionFr: "Plage préférée des amateurs de kitesurf et windsurf grâce à ses vents constants. Sable clair et eaux peu profondes. Ambiance sportive.",
     parking: true, services: ["Escuela kite", "Parking"],
-    lat: 40.0519, lon: 4.0092,
+    lat: 40.0519, lon: 4.0097,
   },
   {
     name: "Arenal d'en Castell",
@@ -173,7 +173,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Perfectly enclosed horseshoe bay, making it very safe. Calm, shallow waters. Well equipped with all services.",
     descriptionFr: "Baie en fer à cheval parfaitement fermée, très sécurisante. Eaux calmes et peu profondes. Bien équipée avec tous les services.",
     parking: true, services: ["Chiringuito", "Salvamento", "Duchas", "Parking"],
-    lat: 40.0506, lon: 4.0789,
+    lat: 40.0503, lon: 4.0789,
   },
   {
     name: "Cala Mesquida",
@@ -184,7 +184,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Open beach with frequent waves, favourite of surfers and bodyboarders. Golden sand, dunes and a well-preserved natural setting.",
     descriptionFr: "Plage ouverte avec des vagues fréquentes, préférée des surfeurs. Sable doré, dunes et un cadre naturel bien préservé.",
     parking: true, services: ["Parking"],
-    lat: 39.9997, lon: 4.2725,
+    lat: 39.9997, lon: 4.2731,
   },
   {
     name: "Punta Prima",
@@ -195,7 +195,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Beach with privileged views of the Aire islet and its lighthouse. Crystal-clear waters and fine sand. Very well equipped and easy to reach.",
     descriptionFr: "Plage avec vue privilégiée sur l'îlot de l'Aire et son phare. Eaux cristallines et sable fin. Très bien équipée et facile d'accès.",
     parking: true, services: ["Chiringuito", "Salvamento", "Duchas", "Parking"],
-    lat: 39.8258, lon: 4.2742,
+    lat: 39.8264, lon: 4.2742,
   },
   {
     name: "Binidalí",
@@ -206,7 +206,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Small, quiet and rarely crowded cove. Very local and authentic. Clean waters and relaxed atmosphere, without summer crowds.",
     descriptionFr: "Petite crique tranquille et peu fréquentée. Très locale et authentique. Eaux propres et ambiance détendue, sans les foules estivales.",
     parking: true, services: ["Parking"],
-    lat: 39.8775, lon: 4.2886,
+    lat: 39.8775, lon: 4.2889,
   },
   {
     name: "Cala Blanca",
@@ -217,7 +217,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "White sand and intensely blue water, close to Ciutadella. Very popular with locals in the evenings. Spectacular sunsets.",
     descriptionFr: "Sable blanc et eau d'un bleu intense, près de Ciutadella. Très populaire parmi les locaux le soir. Couchers de soleil spectaculaires.",
     parking: true, services: ["Chiringuito", "Duchas", "Parking"],
-    lat: 39.9811, lon: 3.7986,
+    lat: 39.9806, lon: 3.7992,
   },
   {
     name: "Cala en Blanes",
@@ -239,7 +239,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Hidden cove with white limestone rock and turquoise water. Very quiet and local atmosphere. Next to a prehistoric site.",
     descriptionFr: "Crique cachée avec roches calcaires blanches et eau turquoise. Ambiance très tranquille et locale. À côté d'un site préhistorique.",
     parking: true, services: ["Parking"],
-    lat: 40.0597, lon: 3.8481,
+    lat: 40.0597, lon: 3.8483,
   },
   {
     name: "Sa Mesquida",
@@ -250,7 +250,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Beach near the port of Maó, with calm waters and golden sand. Highly rated by local residents. Easy access and parking.",
     descriptionFr: "Plage près du port de Maó, avec des eaux calmes et du sable doré. Très appréciée des résidents locaux. Accès et stationnement faciles.",
     parking: true, services: ["Parking"],
-    lat: 39.9953, lon: 4.2650,
+    lat: 39.9947, lon: 4.2644,
   },
   {
     name: "Cala Carbó",
@@ -283,7 +283,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Spectacular cove between 40-metre-high cliffs. Fine sand and incredible water colours. Development above the cliff with unique views.",
     descriptionFr: "Crique spectaculaire entre des falaises de 40 mètres. Sable fin et couleurs d'eau incroyables. Urbanisation au-dessus de la falaise avec des vues uniques.",
     parking: true, services: ["Chiringuito", "Salvamento", "Duchas", "Parking"],
-    lat: 39.8675, lon: 4.1253,
+    lat: 39.8672, lon: 4.1253,
   },
   {
     name: "Es Grau",
@@ -294,7 +294,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Beach within the s'Albufera des Grau Natural Park. Very shallow, calm waters, perfect for children. Unique protected natural setting.",
     descriptionFr: "Plage dans le Parc Naturel de s'Albufera des Grau. Eaux très peu profondes et calmes, parfaites pour les enfants. Cadre naturel protégé unique.",
     parking: true, services: ["Chiringuito", "Parking"],
-    lat: 40.0011, lon: 4.2300,
+    lat: 40.0011, lon: 4.2294,
   },
   {
     name: "Platja de Cavalleria",
@@ -305,7 +305,7 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Wild beach at the northern tip of Menorca, next to the Cavalleria lighthouse. Spectacular landscape with waves when south wind blows. Golden sand.",
     descriptionFr: "Plage sauvage à la pointe nord de Minorque, près du phare de Cavalleria. Paysage spectaculaire avec des vagues par vent du sud. Sable doré.",
     parking: true, services: ["Parking"],
-    lat: 40.0839, lon: 3.9900,
+    lat: 40.0836, lon: 3.9897,
   },
   {
     name: "Cala Fonts",
@@ -316,6 +316,6 @@ export const BEACHES: Beach[] = [
     descriptionEn: "Small urban cove in Es Castell harbour. Surrounded by restaurants and bars with terraces. Perfect for combining swimming and dining.",
     descriptionFr: "Petite crique urbaine dans le port d'Es Castell. Entourée de restaurants et de bars en terrasse. Parfaite pour combiner baignade et gastronomie.",
     parking: true, services: ["Chiringuito", "Parking"],
-    lat: 39.8669, lon: 4.2647,
+    lat: 39.8672, lon: 4.2644,
   },
 ];

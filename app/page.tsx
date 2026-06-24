@@ -12,8 +12,7 @@ const COMPASS: Record<string, string> = { N:"↓", NE:"↙", E:"←", SE:"↖", 
 interface AgendaEvent { title: string; url: string; date: string; place: string; }
 
 function openMaps(lat: number, lon: number, name: string) {
-  const url = `https://www.google.com/maps?q=${lat},${lon}(${encodeURIComponent(name)})&z=17`;
-  window.open(url, "_blank");
+  window.open(`https://maps.google.com/?q=${lat},${lon}`, "_blank");
 }
 
 export default function Home() {
