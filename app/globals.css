@@ -1,53 +1,80 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #1D9E75;
-  --color-primary-dark: #0F6E56;
-  --color-primary-light: #E1F5EE;
-  --color-rain: #E6F1FB;
-  --color-rain-text: #0C447C;
-  --color-sun: #FAEEDA;
-  --color-sun-text: #633806;
+  --bg: #0a0a0a;
+  --bg-card: #141414;
+  --bg-elevated: #161616;
+  --bg-topbar: #0f0f0f;
+  --border: #252525;
+  --border-subtle: #1e1e1e;
+  --accent: #0e9fa8;
+  --accent-dark: #0b7a82;
+  --accent-dim: #071e20;
+  --accent-border: #0e3038;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  --green: #34d399;
+  --green-bg: #0e2a1a;
+  --green-border: #1a3a2a;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f8faf9;
-  color: #1a1a1a;
+  background: var(--bg);
+  color: var(--text-primary);
   min-height: 100vh;
 }
 
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
+.card {
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  padding: 1rem 1.1rem;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #0a0a0a;
   border: none;
   border-radius: 10px;
   padding: 10px 20px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
 }
-.btn-primary:hover {
-  background: var(--color-primary-dark);
-}
+.btn-accent:hover { background: var(--accent-dark); }
 
-.card {
-  background: white;
-  border-radius: 14px;
-  border: 1px solid #e8e8e8;
-  padding: 1.25rem;
-}
-
-.section-label {
+.pill {
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #888;
-  margin-bottom: 10px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: 1px solid transparent;
 }
+.pill-sun { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.pill-wind { background: var(--accent-dim); color: var(--accent); border-color: var(--accent-border); }
+.pill-rain { background: #0a1525; color: #60a5fa; border-color: #152040; }
+
+.tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.tag-teal { background: var(--accent-dim); color: var(--accent); border-color: var(--accent-border); }
+.tag-blue { background: #0a1525; color: #60a5fa; border-color: #152040; }
+.tag-gray { background: #1a1a1a; color: #777; border-color: #252525; }
