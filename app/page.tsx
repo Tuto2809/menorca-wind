@@ -12,8 +12,7 @@ const COMPASS: Record<string, string> = { N:"↓", NE:"↙", E:"←", SE:"↖", 
 interface AgendaEvent { title: string; url: string; date: string; place: string; }
 
 function openMaps(lat: number, lon: number, name: string) {
-  // This format works on both mobile (opens app) and desktop
-  const url = `https://www.google.com/maps?q=${lat},${lon}&z=16&label=${encodeURIComponent(name)}`;
+  const url = `https://www.google.com/maps?q=${lat},${lon}(${encodeURIComponent(name)})&z=17`;
   window.open(url, "_blank");
 }
 
@@ -248,6 +247,7 @@ export default function Home() {
               beachList.map((b, rank) => {
                 const distKm = userLocation ? distanceKm(userLocation.lat, userLocation.lon, b.lat, b.lon) : null;
                 const beachTypeTr = t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type;
+                const beachDesc = lang === "ca" ? b.descriptionCa : lang === "en" ? b.descriptionEn : lang === "fr" ? b.descriptionFr : b.description;
                 return (
                   <div key={b.name} style={S.beachCard}>
                     {/* Rank */}
@@ -267,6 +267,7 @@ export default function Home() {
                         )}
                       </div>
                       <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{b.municipality} · {b.length}</div>
+                      <div style={{ fontSize: 11, color: "#888", marginTop: 4, lineHeight: 1.4 }}>{beachDesc}</div>
                       <div style={{ display: "flex", gap: 4, marginTop: 5, flexWrap: "wrap" }}>
                         <span className="tag tag-teal">🧭 {t.orientation} {b.orientation}</span>
                         <span className="tag tag-blue">{beachTypeTr}</span>
