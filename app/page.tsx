@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { BEACHES, OPPOSITE_ORIENTATIONS, distanceKm, type Orientation } from "@/lib/beaches";
+import { BEACHES, OPPOSITE_ORIENTATIONS, WIND_NAMES, distanceKm, type Orientation } from "@/lib/beaches";
 import type { DayForecast } from "@/lib/weather";
 import BeachFilters, { type FilterState } from "@/components/BeachFilters";
 import { TRANSLATIONS, LANG_FLAGS, LANG_LABELS, detectLang, type Lang } from "@/lib/i18n";
@@ -11,7 +11,7 @@ const COMPASS: Record<string, string> = { N:"↓", NE:"↙", E:"←", SE:"↖", 
 
 interface AgendaEvent { title: string; url: string; date: string; place: string; }
 
-function openMaps(lat: number, lon: number, name: string) {
+function openMaps(lat: number, lon: number) {
   window.open(`https://maps.google.com/?q=${lat},${lon}`, "_blank");
 }
 
@@ -76,68 +76,81 @@ export default function Home() {
       list = [...list].sort((a, b) => distanceKm(userLocation.lat, userLocation.lon, a.lat, a.lon) - distanceKm(userLocation.lat, userLocation.lon, b.lat, b.lon));
     else if (filters.sortBy === "length")
       list = [...list].sort((a, b) => b.lengthM - a.lengthM);
-    return filters.sortBy === "recommended" ? list.slice(0, 5) : list;
+    return list;
   })();
 
   const windName = day ? (t.windNames[day.windDirectionLabel as keyof typeof t.windNames] ?? day.windDirectionLabel) : "";
   const activeFilterCount = (filters.municipality ? 1 : 0) + (filters.type ? 1 : 0) + filters.services.length + (filters.sortBy !== "recommended" ? 1 : 0);
 
-  const S = {
-    topbar: { background: "var(--bg-topbar)", borderBottom: "1px solid #2a2a2a", padding: "14px 16px", position: "sticky" as const, top: 0, zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between" },
-    logoIcon: { width: 34, height: 34, borderRadius: 9, background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 },
-    flagBtn: (active: boolean): React.CSSProperties => ({ fontSize: 12, fontWeight: active ? 700 : 400, opacity: active ? 1 : 0.45, cursor: "pointer", padding: "4px 8px", borderRadius: 6, border: active ? "1.5px solid var(--accent)" : "1.5px solid #2a2a2a", background: active ? "var(--accent-dim)" : "transparent", color: active ? "var(--accent)" : "var(--text-secondary)", transition: "all .12s", letterSpacing: "0.05em" }),
-    dateBtn: (active: boolean): React.CSSProperties => ({ borderRadius: 10, padding: "7px 3px", textAlign: "center", border: active ? "1.5px solid var(--accent)" : "1.5px solid var(--border)", background: active ? "var(--accent)" : "var(--bg-elevated)", cursor: "pointer", transition: "all .12s" }),
-    compass: { width: 54, height: 54, borderRadius: "50%", border: "1.5px solid #2a2a2a", background: "#0f0f0f", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 as const },
-    beachCard: { background: "var(--bg-card)", border: "1.5px solid var(--border)", borderRadius: 14, padding: "11px 12px", marginBottom: 8, display: "flex", gap: 9, alignItems: "center" },
-    beachIcon: { width: 36, height: 36, borderRadius: 9, background: "var(--accent-dim)", border: "1px solid var(--accent-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 as const },
-    mapsBtn: { flexShrink: 0 as const, width: 34, height: 34, borderRadius: 9, border: "1.5px solid var(--border)", background: "#0f0f0f", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, cursor: "pointer", transition: "all .12s" },
-    filterBtn: (active: boolean): React.CSSProperties => ({ display: "flex", alignItems: "center", gap: 5, fontSize: 12, padding: "6px 12px", borderRadius: 999, border: active ? "1.5px solid var(--accent)" : "1.5px solid var(--border)", background: active ? "var(--accent-dim)" : "var(--bg-elevated)", color: active ? "var(--accent)" : "var(--text-secondary)", cursor: "pointer", fontWeight: 500 }),
+  const C = {
+    topbar: { background:"#111", borderBottom:"1.5px solid #222", padding:"14px 16px 12px", position:"sticky" as const, top:0, zIndex:10 },
+    appName: { fontSize:20, fontWeight:800, color:"#fff", letterSpacing:"-.3px", textTransform:"uppercase" as const },
+    appClaim: { fontSize:12, color:"#0e9fa8", marginTop:3, fontStyle:"italic" as const },
+    langRow: { display:"flex", gap:6, marginTop:12 },
+    langBtn: (active:boolean): React.CSSProperties => ({
+      flex:1, padding:"9px 0", borderRadius:9,
+      border: active ? "2px solid #0e9fa8" : "2px solid #2a2a2a",
+      background: active ? "#0e9fa8" : "#1a1a1a",
+      color: active ? "#0a0a0a" : "#666",
+      fontSize:14, fontWeight:700, cursor:"pointer", textAlign:"center", letterSpacing:".05em",
+    }),
+    dateBtn: (active:boolean): React.CSSProperties => ({
+      flexShrink:0, width:62, borderRadius:12, padding:"10px 6px", textAlign:"center",
+      border: active ? "2px solid #0e9fa8" : "1.5px solid #2a2a2a",
+      background: active ? "#0e9fa8" : "#161616", cursor:"pointer",
+    }),
+    compass: { width:58, height:58, borderRadius:"50%", border:"1.5px solid #2a2a2a", background:"#111", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, flexShrink:0 as const },
+    beachCard: { background:"#141414", border:"1.5px solid #2a2a2a", borderRadius:14, padding:"13px", marginBottom:10, display:"flex", gap:10, alignItems:"center" as const },
+    beachIcon: { width:42, height:42, borderRadius:11, background:"#071e20", border:"1.5px solid #0e3038", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 as const },
+    mapsBtn: { flexShrink:0 as const, width:40, height:40, borderRadius:10, border:"1.5px solid #2a2a2a", background:"#111", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, cursor:"pointer" },
+    filterBtn: (active:boolean): React.CSSProperties => ({ display:"flex", alignItems:"center", gap:5, fontSize:13, padding:"8px 14px", borderRadius:99, border: active ? "1.5px solid #0e9fa8" : "1.5px solid #2a2a2a", background: active ? "#071e20" : "#1a1a1a", color: active ? "#0e9fa8" : "#888", cursor:"pointer", fontWeight:600 }),
   };
 
   return (
-    <main style={{ minHeight: "100vh", background: "var(--bg)", paddingBottom: 60 }}>
+    <main style={{ minHeight:"100vh", background:"#0a0a0a", paddingBottom:60 }}>
       {/* Topbar */}
-      <div style={S.topbar}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={S.logoIcon}>🌊</div>
-          <div>
-            <div style={{ fontWeight: 600, fontSize: 15, color: "var(--text-primary)" }}>Menorca Wind</div>
-            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{t.appSub}</div>
+      <div style={C.topbar}>
+        <div style={{ maxWidth:640, margin:"0 auto" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            <div style={{ width:42, height:42, borderRadius:12, background:"#0e9fa8", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>🌊</div>
+            <div>
+              <div style={C.appName}>Playas de Menorca</div>
+              <div style={C.appClaim}>¿Dónde voy según el viento?</div>
+            </div>
           </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          {(["ca","es","en","fr"] as Lang[]).map(l => (
-            <button key={l} title={LANG_LABELS[l]} onClick={() => setLang(l)} style={S.flagBtn(lang === l)}>
-              {LANG_FLAGS[l]}
-            </button>
-          ))}
-          <a href="/admin" style={{ fontSize: 11, color: "var(--text-muted)", textDecoration: "none", marginLeft: 8 }}>{t.admin}</a>
+          <div style={C.langRow}>
+            {(["ca","es","en","fr"] as Lang[]).map(l => (
+              <button key={l} onClick={() => setLang(l)} style={C.langBtn(lang === l)} title={LANG_LABELS[l]}>
+                {LANG_FLAGS[l]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 640, margin: "0 auto", padding: "18px 14px" }}>
+      <div style={{ maxWidth:640, margin:"0 auto", padding:"18px 14px" }}>
 
         {/* Date selector */}
         <p className="section-label">{t.chooseDay}</p>
         {loading ? (
-          <div style={{ textAlign: "center", padding: "20px", color: "var(--text-muted)", fontSize: 14 }}>{t.loading}</div>
+          <div style={{ textAlign:"center", padding:"20px", color:"#555", fontSize:15 }}>{t.loading}</div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(8,1fr)", gap: 5, marginBottom: 18 }}>
+          <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:4, scrollbarWidth:"none", marginBottom:20 }}>
             {forecast.map((d, i) => {
               const date = new Date(d.date + "T12:00:00");
               const active = i === selectedIdx;
               return (
-                <button key={d.date} onClick={() => setSelectedIdx(i)} style={S.dateBtn(active)}>
-                  <span style={{ display: "block", fontSize: 9, color: active ? "rgba(0,0,0,.6)" : "var(--text-muted)" }}>
+                <button key={d.date} onClick={() => setSelectedIdx(i)} style={C.dateBtn(active)}>
+                  <span style={{ display:"block", fontSize:11, color: active ? "rgba(0,0,0,.6)" : "#555" }}>
                     {i === 0 ? t.today : t.days[date.getDay()]}
                   </span>
-                  <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: active ? "#0a0a0a" : "#ccc", marginTop: 1 }}>
+                  <span style={{ display:"block", fontSize:22, fontWeight:800, color: active ? "#0a0a0a" : "#ddd", marginTop:2, lineHeight:1 }}>
                     {date.getDate()}
                   </span>
-                  <span style={{ display: "block", fontSize: 10, color: active ? "rgba(0,0,0,.5)" : "var(--text-muted)" }}>
+                  <span style={{ display:"block", fontSize:11, color: active ? "rgba(0,0,0,.5)" : "#555", marginTop:1 }}>
                     {t.months[date.getMonth()]}
                   </span>
-                  <span style={{ display: "block", fontSize: 11, marginTop: 2 }}>
+                  <span style={{ display:"block", fontSize:14, marginTop:3 }}>
                     {d.isRainy ? "🌧" : d.windspeed > 25 ? "💨" : "☀️"}
                   </span>
                 </button>
@@ -149,25 +162,25 @@ export default function Home() {
         {day && (
           <>
             {/* Weather card */}
-            <div className="card" style={{ marginBottom: 14 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <p className="section-label" style={{ margin: 0 }}>{t.forecast}</p>
-                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                  {(() => { const d = new Date(day.date + "T12:00:00"); return `${t.days[d.getDay()]} ${d.getDate()} ${t.months[d.getMonth()]}`; })()}
+            <div className="card" style={{ marginBottom:16 }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                <p className="section-label" style={{ margin:0 }}>{t.forecast}</p>
+                <span style={{ fontSize:13, color:"#555" }}>
+                  {(() => { const d = new Date(day.date+"T12:00:00"); return `${t.days[d.getDay()]} ${d.getDate()} ${t.months[d.getMonth()]}`; })()}
                 </span>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={S.compass}>{COMPASS[day.windDirectionLabel] ?? "↑"}</div>
+              <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                <div style={C.compass}>{COMPASS[day.windDirectionLabel] ?? "↑"}</div>
                 <div>
-                  <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text-primary)" }}>
+                  <div style={{ fontSize:19, fontWeight:700, color:"#fff", lineHeight:1.2 }}>
                     {windName} ({day.windDirectionLabel}) · {day.windspeed} km/h
                   </div>
-                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 3 }}>
-                    {t.forecast.includes("Prev") ? "Temp. màx." : "Temp. max."} {day.tempMax}°C · {day.precipitationProbability}%
+                  <div style={{ fontSize:14, color:"#666", marginTop:4 }}>
+                    {day.tempMax}°C · {t.rainLikely.includes("Pl") ? "Pluja" : "Lluvia"} {day.precipitationProbability}%
                   </div>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
+              <div style={{ display:"flex", gap:7, marginTop:12, flexWrap:"wrap" }}>
                 {day.isRainy && <span className="pill pill-rain">🌧 {t.rainLikely}</span>}
                 {!day.isRainy && <span className="pill pill-sun">☀️ {t.goodWeather}</span>}
                 {day.windspeed > 25 && <span className="pill pill-wind">💨 {t.strongWind}</span>}
@@ -176,49 +189,45 @@ export default function Home() {
 
             {/* Rain plan */}
             {day.isRainy && (
-              <div style={{ border: "1.5px solid #152040", borderRadius: 14, padding: "1rem 1.1rem", background: "#0a1525", marginBottom: 14 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#60a5fa", marginBottom: 10 }}>
-                  🌧 {t.rainPlanTitle}
-                </div>
+              <div style={{ border:"1.5px solid #152040", borderRadius:16, padding:"1rem 1.2rem", background:"#0a1525", marginBottom:16 }}>
+                <div style={{ fontSize:15, fontWeight:700, color:"#60a5fa", marginBottom:10 }}>🌧 {t.rainPlanTitle}</div>
                 {agendaLoading ? (
-                  <div style={{ fontSize: 13, color: "#4a7ab5" }}>{t.loadingAgenda}</div>
+                  <div style={{ fontSize:14, color:"#4a7ab5" }}>{t.loadingAgenda}</div>
                 ) : agendaEvents.length > 0 ? (
-                  <ul style={{ listStyle: "none", padding: 0 }}>
+                  <ul style={{ listStyle:"none", padding:0 }}>
                     {agendaEvents.map((ev, i) => (
-                      <li key={i} style={{ fontSize: 13, color: "#60a5fa", padding: "6px 0", borderBottom: i < agendaEvents.length - 1 ? "1px solid #152040" : "none" }}>
-                        <a href={ev.url} target="_blank" rel="noopener noreferrer" style={{ color: "#60a5fa", textDecoration: "none", fontWeight: 500 }}>
-                          📍 {ev.title}
-                        </a>
-                        {ev.place && <span style={{ color: "#4a7ab5", marginLeft: 6 }}>— {ev.place}</span>}
+                      <li key={i} style={{ fontSize:14, color:"#60a5fa", padding:"6px 0", borderBottom: i < agendaEvents.length-1 ? "1px solid #152040" : "none" }}>
+                        <a href={ev.url} target="_blank" rel="noopener noreferrer" style={{ color:"#60a5fa", textDecoration:"none", fontWeight:600 }}>📍 {ev.title}</a>
+                        {ev.place && <span style={{ color:"#4a7ab5", marginLeft:6 }}>— {ev.place}</span>}
                       </li>
                     ))}
-                    <li style={{ fontSize: 12, padding: "8px 0 0" }}>
-                      <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer" style={{ color: "#4a7ab5" }}>{t.fullAgenda}</a>
+                    <li style={{ fontSize:13, padding:"8px 0 0" }}>
+                      <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer" style={{ color:"#4a7ab5" }}>{t.fullAgenda}</a>
                     </li>
                   </ul>
                 ) : (
-                  <ul style={{ listStyle: "none", padding: 0 }}>
-                    {["Visita al casco histórico de Ciutadella", "Museo de Menorca (Maó)", "Naveta des Tudons", "Mercado municipal de Maó", "Binibèquer Vell", "Fortaleza de La Mola"].map((a, i) => (
-                      <li key={i} style={{ fontSize: 13, color: "#60a5fa", padding: "5px 0", borderBottom: i < 5 ? "1px solid #152040" : "none" }}>📍 {a}</li>
+                  <ul style={{ listStyle:"none", padding:0 }}>
+                    {["Visita al casco histórico de Ciutadella","Museo de Menorca (Maó)","Naveta des Tudons","Mercado municipal de Maó","Binibèquer Vell","Fortaleza de La Mola"].map((a,i) => (
+                      <li key={i} style={{ fontSize:14, color:"#60a5fa", padding:"5px 0", borderBottom: i<5 ? "1px solid #152040":"none" }}>📍 {a}</li>
                     ))}
-                    <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4a7ab5", display: "block", marginTop: 8 }}>{t.fullAgenda}</a>
+                    <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer" style={{ fontSize:13, color:"#4a7ab5", display:"block", marginTop:8 }}>{t.fullAgenda}</a>
                   </ul>
                 )}
               </div>
             )}
 
             {/* Beach header */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}>
-                🏖️ {day.isRainy ? t.beachesRainy : t.beachesTitle}
-                <span style={{ fontSize: 12, fontWeight: 400, color: "var(--text-muted)" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+              <div>
+                <span style={{ fontSize:17, fontWeight:700, color:"#fff" }}>🏖️ {day.isRainy ? t.beachesRainy : t.beachesTitle}</span>
+                <span style={{ fontSize:14, fontWeight:400, color:"#555", marginLeft:6 }}>
                   · {beachList.length} {beachList.length === 1 ? t.results : t.resultsPlural}
                 </span>
               </div>
-              <button onClick={() => setShowFilters(v => !v)} style={S.filterBtn(activeFilterCount > 0)}>
+              <button onClick={() => setShowFilters(v => !v)} style={C.filterBtn(activeFilterCount > 0)}>
                 🎛 {t.filters}
                 {activeFilterCount > 0 && (
-                  <span style={{ background: "var(--accent)", color: "#0a0a0a", borderRadius: 999, fontSize: 10, padding: "1px 5px", fontWeight: 700 }}>
+                  <span style={{ background:"#0e9fa8", color:"#0a0a0a", borderRadius:99, fontSize:11, padding:"2px 6px", fontWeight:800 }}>
                     {activeFilterCount}
                   </span>
                 )}
@@ -227,18 +236,18 @@ export default function Home() {
 
             {/* Filter panel */}
             {showFilters && (
-              <div className="card" style={{ marginBottom: 14 }}>
-                {locationError && <div style={{ fontSize: 12, color: "#f87171", marginBottom: 8 }}>{locationError}</div>}
+              <div className="card" style={{ marginBottom:14 }}>
+                {locationError && <div style={{ fontSize:13, color:"#f87171", marginBottom:8 }}>{locationError}</div>}
                 <BeachFilters filters={filters} onChange={setFilters} hasLocation={!!userLocation} onRequestLocation={requestLocation} t={t} />
               </div>
             )}
 
-            {/* Beach list */}
+            {/* Beach list — all, vertical scroll */}
             {beachList.length === 0 ? (
-              <div className="card" style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>🔍</div>
-                <div style={{ fontSize: 14 }}>{t.noResults}</div>
-                <button onClick={() => setFilters(DEFAULT_FILTERS)} style={{ marginTop: 10, fontSize: 13, color: "var(--accent)", background: "none", border: "none", cursor: "pointer" }}>
+              <div className="card" style={{ textAlign:"center", padding:"2rem", color:"#555" }}>
+                <div style={{ fontSize:32, marginBottom:8 }}>🔍</div>
+                <div style={{ fontSize:15 }}>{t.noResults}</div>
+                <button onClick={() => setFilters(DEFAULT_FILTERS)} style={{ marginTop:12, fontSize:14, color:"#0e9fa8", background:"none", border:"none", cursor:"pointer", fontWeight:600 }}>
                   {t.clearFiltersBtn}
                 </button>
               </div>
@@ -248,57 +257,45 @@ export default function Home() {
                 const beachTypeTr = t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type;
                 const beachDesc = lang === "ca" ? b.descriptionCa : lang === "en" ? b.descriptionEn : lang === "fr" ? b.descriptionFr : b.description;
                 return (
-                  <div key={b.name} style={S.beachCard}>
-                    {/* Rank */}
-                    <div style={{ width: 20, height: 20, borderRadius: "50%", background: rank === 0 ? "var(--accent)" : "#222", color: rank === 0 ? "#0a0a0a" : "#666", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>
-                      {rank + 1}
+                  <div key={b.name} style={C.beachCard}>
+                    <div style={{ width:24, height:24, borderRadius:"50%", background: rank===0 ? "#0e9fa8":"#1e1e1e", color: rank===0 ? "#0a0a0a":"#555", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0 }}>
+                      {rank+1}
                     </div>
-                    {/* Icon */}
-                    <div style={S.beachIcon}>🏝️</div>
-                    {/* Info */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 6 }}>
-                        <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.name}</div>
+                    <div style={C.beachIcon}>🏝️</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", gap:6 }}>
+                        <div style={{ fontWeight:700, fontSize:15, color:"#fff", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{b.name}</div>
                         {distKm !== null && (
-                          <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600, flexShrink: 0 }}>
-                            {distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(1)} km`}
+                          <div style={{ fontSize:12, color:"#0e9fa8", fontWeight:700, flexShrink:0 }}>
+                            {distKm < 1 ? `${Math.round(distKm*1000)} m` : `${distKm.toFixed(1)} km`}
                           </div>
                         )}
                       </div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{b.municipality} · {b.length}</div>
-                      <div style={{ fontSize: 11, color: "#888", marginTop: 4, lineHeight: 1.4 }}>{beachDesc}</div>
-                      <div style={{ display: "flex", gap: 4, marginTop: 5, flexWrap: "wrap" }}>
+                      <div style={{ fontSize:12, color:"#555", marginTop:2 }}>{b.municipality} · {b.length}</div>
+                      <div style={{ fontSize:12, color:"#777", marginTop:5, lineHeight:1.45 }}>{beachDesc}</div>
+                      <div style={{ display:"flex", gap:5, marginTop:7, flexWrap:"wrap" }}>
                         <span className="tag tag-teal">🧭 {t.orientation} {b.orientation}</span>
                         <span className="tag tag-blue">{beachTypeTr}</span>
                         {b.parking && <span className="tag tag-gray">🅿️</span>}
                       </div>
                     </div>
-                    {/* Maps button */}
-                    <button
-                      onClick={() => openMaps(b.lat, b.lon, b.name)}
-                      style={S.mapsBtn}
-                      title={t.openMaps}
-                      aria-label={t.openMaps}
-                    >
-                      📍
-                    </button>
+                    <button onClick={() => openMaps(b.lat, b.lon)} style={C.mapsBtn} title={t.openMaps} aria-label={t.openMaps}>📍</button>
                   </div>
                 );
               })
             )}
 
             {/* Jellyfish */}
-            <div style={{ background: "#141200", border: "1.5px solid #2a2400", borderRadius: 14, padding: "11px 12px", marginTop: 4, display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ fontSize: 22 }}>🪼</div>
+            <div style={{ background:"#141200", border:"1.5px solid #2a2400", borderRadius:14, padding:"13px", marginTop:8, display:"flex", alignItems:"center", gap:12 }}>
+              <div style={{ fontSize:26 }}>🪼</div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#fbbf24" }}>{t.jellyTitle}</div>
-                <div style={{ fontSize: 11, color: "#5a4a10", marginTop: 2 }}>{t.jellySub}</div>
+                <div style={{ fontSize:14, fontWeight:700, color:"#fbbf24" }}>{t.jellyTitle}</div>
+                <div style={{ fontSize:12, color:"#5a4a10", marginTop:3 }}>{t.jellySub}</div>
               </div>
             </div>
 
-            {/* Wind logic explanation */}
-            <div style={{ fontSize: 11, color: "var(--text-muted)", textAlign: "center", marginTop: 12 }}>
-              {t.windExplain.replace("{name}", windName).replace("{dir}", day.windDirectionLabel).replace("{opp}", (OPPOSITE_ORIENTATIONS[day.windDirectionLabel as Orientation] ?? []).join(", "))}
+            <div style={{ fontSize:12, color:"#333", textAlign:"center", marginTop:12, fontStyle:"italic" }}>
+              {t.windExplain.replace("{name}",windName).replace("{dir}",day.windDirectionLabel).replace("{opp}",(OPPOSITE_ORIENTATIONS[day.windDirectionLabel as Orientation]??[]).join(", "))}
             </div>
           </>
         )}

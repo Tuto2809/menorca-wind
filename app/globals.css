@@ -3,9 +3,9 @@
 :root {
   --bg: #0a0a0a;
   --bg-card: #141414;
-  --bg-elevated: #161616;
-  --bg-topbar: #0f0f0f;
-  --border: #252525;
+  --bg-elevated: #1a1a1a;
+  --bg-topbar: #111111;
+  --border: #2a2a2a;
   --border-subtle: #1e1e1e;
   --accent: #0e9fa8;
   --accent-dark: #0b7a82;
@@ -26,54 +26,42 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   min-height: 100vh;
+  font-size: 16px;
 }
 
 .card {
   background: var(--bg-card);
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1.5px solid var(--border);
-  padding: 1rem 1.1rem;
+  padding: 1.1rem 1.2rem;
 }
 
 .section-label {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
-
-.btn-accent {
-  background: var(--accent);
-  color: #0a0a0a;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-accent:hover { background: var(--accent-dark); }
 
 .pill {
-  font-size: 11px;
-  padding: 3px 9px;
-  border-radius: 6px;
-  font-weight: 500;
-  border: 1px solid transparent;
+  font-size: 13px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1.5px solid transparent;
 }
 .pill-sun { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
 .pill-wind { background: var(--accent-dim); color: var(--accent); border-color: var(--accent-border); }
 .pill-rain { background: #0a1525; color: #60a5fa; border-color: #152040; }
 
 .tag {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 5px;
-  font-weight: 500;
-  border: 1px solid transparent;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1.5px solid transparent;
 }
 .tag-teal { background: var(--accent-dim); color: var(--accent); border-color: var(--accent-border); }
 .tag-blue { background: #0a1525; color: #60a5fa; border-color: #152040; }
