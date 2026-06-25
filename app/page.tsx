@@ -6,8 +6,52 @@ import type { DayForecast } from "@/lib/weather";
 import BeachFilters, { type FilterState } from "@/components/BeachFilters";
 import { TRANSLATIONS, LANG_FLAGS, LANG_LABELS, detectLang, type Lang } from "@/lib/i18n";
 
+
 const DEFAULT_FILTERS: FilterState = { municipality: null, type: null, services: [], sortBy: "recommended" };
 const COMPASS: Record<string, string> = { N:"↓", NE:"↙", E:"←", SE:"↖", S:"↑", SW:"↗", W:"→", NW:"↘" };
+
+// Occupancy estimation: 0-3 (tranquila / moderada / concurrida / llena)
+function getOccupancy(dateStr: string): { level: 0|1|2|3; label: string; labelCa: string; labelEn: string; labelFr: string; color: string } {
+  const d = new Date(dateStr + "T12:00:00");
+  const month = d.getMonth() + 1;   // 1-12
+  const dow   = d.getDay();         // 0=Sun 6=Sat
+  const isWeekend = dow === 0 || dow === 6;
+  const isPeakMonth = month >= 7 && month <= 8;
+  const isShoulderMonth = month === 6 || month === 9;
+
+  let score = 0;
+  if (isPeakMonth)     score += 2;
+  else if (isShoulderMonth) score += 1;
+  if (isWeekend)       score += 1;
+
+  const level = Math.min(score, 3) as 0|1|2|3;
+  const labels = [
+    { label:"Tranquila",  labelCa:"Tranquil·la", labelEn:"Quiet",     labelFr:"Tranquille",  color:"#34d399" },
+    { label:"Moderada",   labelCa:"Moderada",    labelEn:"Moderate",  labelFr:"Modérée",     color:"#fbbf24" },
+    { label:"Concurrida", labelCa:"Concorreguda",labelEn:"Busy",      labelFr:"Animée",      color:"#fb923c" },
+    { label:"Llena",      labelCa:"Plena",       labelEn:"Very busy", labelFr:"Très animée", color:"#f87171" },
+  ];
+  return { level, ...labels[level] };
+}
+
+// Share text generator
+function buildShareText(beachName: string, windName: string, windDir: string, dateStr: string, lang: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  const days: Record<string, string[]> = {
+    es: ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],
+    ca: ["diumenge","dilluns","dimarts","dimecres","dijous","divendres","dissabte"],
+    en: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    fr: ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"],
+  };
+  const dayName = (days[lang] ?? days.es)[d.getDay()];
+  const texts: Record<string, string> = {
+    es: `🌊 Este ${dayName} voy a ${beachName} (Menorca)\n💨 Viento ${windName} (${windDir}) → playa protegida del viento\n\n¿Nos vemos allí? 🏝️\n\nRecomendado por Playas de Menorca 👉 https://menorca-wind-fha3.vercel.app`,
+    ca: `🌊 Aquest ${dayName} vaig a ${beachName} (Menorca)\n💨 Vent ${windName} (${windDir}) → platja protegida del vent\n\nEns veiem allà? 🏝️\n\nRecomanat per Platges de Menorca 👉 https://menorca-wind-fha3.vercel.app`,
+    en: `🌊 This ${dayName} I'm going to ${beachName} (Menorca)\n💨 ${windName} wind (${windDir}) → sheltered beach\n\nSee you there? 🏝️\n\nRecommended by Playas de Menorca 👉 https://menorca-wind-fha3.vercel.app`,
+    fr: `🌊 Ce ${dayName} je vais à ${beachName} (Menorca)\n💨 Vent ${windName} (${windDir}) → plage protégée\n\nOn se retrouve là-bas? 🏝️\n\nRecommandé par Playas de Menorca 👉 https://menorca-wind-fha3.vercel.app`,
+  };
+  return texts[lang] ?? texts.es;
+}
 
 interface AgendaEvent { title: string; url: string; date: string; place: string; }
 
@@ -26,6 +70,8 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [shareBeach, setShareBeach] = useState<string | null>(null);
+
 
   useEffect(() => {
     setLang(detectLang());
@@ -33,6 +79,7 @@ export default function Home() {
       .then(r => r.json())
       .then(d => { setForecast(d.forecast ?? []); setLoading(false); })
       .catch(() => setLoading(false));
+
   }, []);
 
   const t = TRANSLATIONS[lang];
@@ -273,13 +320,25 @@ export default function Home() {
                       </div>
                       <div style={{ fontSize:12, color:"#555", marginTop:2 }}>{b.municipality} · {b.length}</div>
                       <div style={{ fontSize:12, color:"#777", marginTop:5, lineHeight:1.45 }}>{beachDesc}</div>
-                      <div style={{ display:"flex", gap:5, marginTop:7, flexWrap:"wrap" }}>
+                      <div style={{ display:"flex", gap:5, marginTop:7, flexWrap:"wrap", alignItems:"center" }}>
                         <span className="tag tag-teal">🧭 {t.orientation} {b.orientation}</span>
                         <span className="tag tag-blue">{beachTypeTr}</span>
                         {b.parking && <span className="tag tag-gray">🅿️</span>}
+                        {(() => {
+                          const occ = getOccupancy(day.date);
+                          const occLabel = lang === "ca" ? occ.labelCa : lang === "en" ? occ.labelEn : lang === "fr" ? occ.labelFr : occ.label;
+                          return (
+                            <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, fontWeight:600, border:"1.5px solid transparent", background:"#1a1a1a", color:occ.color, borderColor:"#2a2a2a" }}>
+                              {"👥 "}{occLabel}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
-                    <button onClick={() => openMaps(b.lat, b.lon)} style={C.mapsBtn} title={t.openMaps} aria-label={t.openMaps}>📍</button>
+                    <div style={{ display:"flex", flexDirection:"column", gap:5, flexShrink:0 }}>
+                      <button onClick={() => openMaps(b.lat, b.lon)} style={C.mapsBtn} title={t.openMaps} aria-label={t.openMaps}>📍</button>
+                      <button onClick={() => setShareBeach(b.name)} style={{ ...C.mapsBtn, fontSize:17 }} title="Compartir" aria-label="Compartir">📤</button>
+                    </div>
                   </div>
                 );
               })
@@ -300,6 +359,40 @@ export default function Home() {
           </>
         )}
       </div>
+
+      {/* Share modal */}
+      {shareBeach && day && (() => {
+        const text = buildShareText(shareBeach, windName, day.windDirectionLabel, day.date, lang);
+        const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        const igText = text;
+        return (
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:50, display:"flex", alignItems:"flex-end", justifyContent:"center", padding:"0 0 0 0" }} onClick={() => setShareBeach(null)}>
+            <div style={{ background:"#141414", border:"1.5px solid #2a2a2a", borderRadius:"20px 20px 0 0", padding:"24px 20px 36px", width:"100%", maxWidth:640 }} onClick={e => e.stopPropagation()}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+                <div style={{ fontSize:16, fontWeight:700, color:"#fff" }}>📤 Compartir {shareBeach}</div>
+                <button onClick={() => setShareBeach(null)} style={{ background:"none", border:"none", color:"#555", fontSize:20, cursor:"pointer" }}>✕</button>
+              </div>
+              <div style={{ background:"#0a0a0a", border:"1.5px solid #2a2a2a", borderRadius:12, padding:"12px 14px", marginBottom:16 }}>
+                <div style={{ fontSize:13, color:"#aaa", lineHeight:1.6, whiteSpace:"pre-line" }}>{text}</div>
+              </div>
+              <div style={{ display:"flex", gap:10 }}>
+                <a href={waUrl} target="_blank" rel="noopener noreferrer" style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", borderRadius:12, background:"#075e54", color:"white", textDecoration:"none", fontSize:14, fontWeight:700 }}>
+                  <span style={{ fontSize:20 }}>💬</span> WhatsApp
+                </a>
+                <button onClick={() => { navigator.clipboard?.writeText(igText); setShareBeach(null); }} style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", borderRadius:12, background:"#833ab4", color:"white", border:"none", fontSize:14, fontWeight:700, cursor:"pointer" }}>
+                  <span style={{ fontSize:20 }}>📸</span> Copiar para IG
+                </button>
+                <button onClick={() => { navigator.clipboard?.writeText(igText); setShareBeach(null); }} style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6, padding:"12px 14px", borderRadius:12, background:"#1a1a1a", border:"1.5px solid #2a2a2a", color:"#aaa", fontSize:13, fontWeight:600, cursor:"pointer" }}>
+                  📋 Copiar
+                </button>
+              </div>
+              <div style={{ marginTop:12, textAlign:"center", fontSize:11, color:"#333" }}>
+                menorca-wind-fha3.vercel.app
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </main>
   );
 }
