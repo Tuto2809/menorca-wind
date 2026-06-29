@@ -53,7 +53,7 @@ function buildShareText(beachName: string, windName: string, windDir: string, da
   return texts[lang] ?? texts.es;
 }
 
-interface AgendaEvent { title: string; url: string; date: string; place: string; }
+interface AgendaEvent { title: string; url: string; category: string; day: string; month: string; time: string; image: string | null; ticketUrl: string | null; }
 
 function openMaps(lat: number, lon: number) {
   window.open(`https://maps.google.com/?q=${lat},${lon}`, "_blank");
@@ -248,28 +248,66 @@ export default function Home() {
             {/* Rain plan */}
             {day.isRainy && (
               <div style={{ border:"1.5px solid #152040", borderRadius:16, padding:"1rem 1.2rem", background:"#0a1525", marginBottom:16 }}>
-                <div style={{ fontSize:15, fontWeight:700, color:"#60a5fa", marginBottom:10 }}>🌧 {t.rainPlanTitle}</div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                  <div style={{ fontSize:15, fontWeight:700, color:"#60a5fa" }}>🌧 {t.rainPlanTitle}</div>
+                  <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize:11, color:"#4a7ab5", textDecoration:"none" }}>apuntmenorca.com →</a>
+                </div>
                 {agendaLoading ? (
-                  <div style={{ fontSize:14, color:"#4a7ab5" }}>{t.loadingAgenda}</div>
+                  <div style={{ fontSize:14, color:"#4a7ab5", textAlign:"center", padding:"12px 0" }}>
+                    <div style={{ fontSize:24, marginBottom:6 }}>⏳</div>
+                    {t.loadingAgenda}
+                  </div>
                 ) : agendaEvents.length > 0 ? (
-                  <ul style={{ listStyle:"none", padding:0 }}>
+                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                     {agendaEvents.map((ev, i) => (
-                      <li key={i} style={{ fontSize:14, color:"#60a5fa", padding:"6px 0", borderBottom: i < agendaEvents.length-1 ? "1px solid #152040" : "none" }}>
-                        <a href={ev.url} target="_blank" rel="noopener noreferrer" style={{ color:"#60a5fa", textDecoration:"none", fontWeight:600 }}>📍 {ev.title}</a>
-                        {ev.place && <span style={{ color:"#4a7ab5", marginLeft:6 }}>— {ev.place}</span>}
-                      </li>
+                      <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer"
+                        style={{ display:"flex", gap:10, alignItems:"center", textDecoration:"none",
+                          background:"#0d1e33", border:"1px solid #1a2e4a", borderRadius:12, padding:"10px", overflow:"hidden" }}>
+                        {ev.image && (
+                          <img src={ev.image} alt={ev.title}
+                            style={{ width:56, height:56, borderRadius:8, objectFit:"cover", flexShrink:0 }} />
+                        )}
+                        {!ev.image && (
+                          <div style={{ width:56, height:56, borderRadius:8, background:"#152040", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>
+                            {ev.category === "Música" ? "🎵" : ev.category === "Cine" ? "🎬" : ev.category === "Escena" ? "🎭" : ev.category === "Familiar" ? "👨‍👩‍👧" : "📅"}
+                          </div>
+                        )}
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
+                            <span style={{ fontSize:10, fontWeight:700, padding:"2px 6px", borderRadius:4,
+                              background:"#152040", color:"#60a5fa", textTransform:"uppercase", letterSpacing:".05em" }}>
+                              {ev.category}
+                            </span>
+                            {ev.ticketUrl && (
+                              <span style={{ fontSize:10, padding:"2px 6px", borderRadius:4,
+                                background:"#0e2a1a", color:"#34d399", fontWeight:700 }}>🎟 Entradas</span>
+                            )}
+                          </div>
+                          <div style={{ fontSize:13, fontWeight:600, color:"#fff", lineHeight:1.3,
+                            overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as const }}>
+                            {ev.title}
+                          </div>
+                          <div style={{ fontSize:11, color:"#4a7ab5", marginTop:3 }}>
+                            📅 {ev.day} {ev.month} · 🕐 {ev.time}
+                          </div>
+                        </div>
+                      </a>
                     ))}
-                    <li style={{ fontSize:13, padding:"8px 0 0" }}>
-                      <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer" style={{ color:"#4a7ab5" }}>{t.fullAgenda}</a>
-                    </li>
-                  </ul>
+                  </div>
                 ) : (
-                  <ul style={{ listStyle:"none", padding:0 }}>
-                    {["Visita al casco histórico de Ciutadella","Museo de Menorca (Maó)","Naveta des Tudons","Mercado municipal de Maó","Binibèquer Vell","Fortaleza de La Mola"].map((a,i) => (
-                      <li key={i} style={{ fontSize:14, color:"#60a5fa", padding:"5px 0", borderBottom: i<5 ? "1px solid #152040":"none" }}>📍 {a}</li>
-                    ))}
-                    <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer" style={{ fontSize:13, color:"#4a7ab5", display:"block", marginTop:8 }}>{t.fullAgenda}</a>
-                  </ul>
+                  <div>
+                    <ul style={{ listStyle:"none", padding:0 }}>
+                      {["Casco histórico de Ciutadella","Museo de Menorca (Maó)","Naveta des Tudons","Mercado municipal de Maó","Binibèquer Vell","Fortaleza de La Mola"].map((a,i) => (
+                        <li key={i} style={{ fontSize:14, color:"#60a5fa", padding:"7px 0",
+                          borderBottom: i<5 ? "1px solid #152040":"none", display:"flex", gap:8, alignItems:"center" }}>
+                          <span>📍</span> {a}
+                        </li>
+                      ))}
+                      <a href="https://apuntmenorca.com/agenda/" target="_blank" rel="noopener noreferrer"
+                        style={{ fontSize:12, color:"#4a7ab5", display:"block", marginTop:10 }}>{t.fullAgenda}</a>
+                    </ul>
+                  </div>
                 )}
               </div>
             )}
