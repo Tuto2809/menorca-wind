@@ -15,8 +15,8 @@ export async function GET() {
   try {
     const res = await fetch("https://apuntmenorca.com/agenda/", {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; MenorcaWind/1.0)",
-        Accept: "text/html",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml",
       },
       next: { revalidate: 3600 },
     });
@@ -28,60 +28,60 @@ export async function GET() {
   }
 }
 
-const CATEGORY_ICONS: Record<string, string> = {
-  "música": "🎵", "music": "🎵", "musica": "🎵",
-  "cine": "🎬", "cinema": "🎬",
-  "escena": "🎭", "teatro": "🎭", "teatre": "🎭", "danza": "💃", "dansa": "💃",
-  "familiar": "👨‍👩‍👧", "arte": "🎨", "art": "🎨",
-  "cocina": "🍽️", "cuina": "🍽️",
-  "literatura": "📚", "debate": "🗣️", "deportes": "⚽",
-};
-
-function getCategoryIcon(cat: string): string {
-  return CATEGORY_ICONS[cat.toLowerCase().trim()] ?? "📅";
-}
-
 function parseEvents(html: string): AgendaEvent[] {
   const events: AgendaEvent[] = [];
   const seen = new Set<string>();
 
-  // Pattern: each event block has a day number header, then image link, then category, then title link
-  // Structure: # DD\n\n...\n\n[![title](img)](url)\n\n[Compra la entrada](ticketUrl)\n\nCategory\n\n[Title](url)\n\ndescription
-  
-  // Split by event blocks — each starts with a day number heading
-  const blocks = html.split(/(?=# \d{2}\n)/);
+  // Strategy: find all event URLs first (only /eventos-menorca/ paths)
+  // Then for each, extract surrounding context
+  const eventLinkRegex = /href="(https:\/\/apuntmenorca\.com\/eventos-menorca\/[^"]+)"/g;
+  const eventUrls: string[] = [];
+  let m;
+  while ((m = eventLinkRegex.exec(html)) !== null) {
+    if (!seen.has(m[1])) {
+      seen.add(m[1]);
+      eventUrls.push(m[1]);
+    }
+  }
 
-  for (const block of blocks) {
-    // Extract day and month
-    const dayMatch = block.match(/^# (\d{2})\n\n(\w+) · (\d{1,2}:\d{2}) H (\w+)/m);
+  // For each URL, find the surrounding block in HTML
+  for (const url of eventUrls) {
+    // Find position of this URL in HTML
+    const pos = html.indexOf(`href="${url}"`);
+    if (pos === -1) continue;
+
+    // Look back ~1500 chars for the day heading (# DD\n)
+    const lookback = html.substring(Math.max(0, pos - 1500), pos);
+    const dayMatch = lookback.match(/# (\d{2})\n\n(\w+) · (\d{1,2}:\d{2}) H (\w+)/);
     if (!dayMatch) continue;
 
     const day = dayMatch[1];
-    const weekday = dayMatch[2];
     const time = dayMatch[3];
     const month = dayMatch[4];
 
-    // Extract image
-    const imgMatch = block.match(/!\[([^\]]*)\]\((https:\/\/apuntmenorca\.com\/wp-content\/[^)]+)\)/);
-    const image = imgMatch ? imgMatch[2] : null;
+    // Look forward ~500 chars for title (the text inside the link)
+    const lookfwd = html.substring(pos, pos + 800);
 
-    // Extract ticket URL
-    const ticketMatch = block.match(/\[Compra la entrada\]\((https:\/\/apuntmenorca\.com\/eventos-menorca\/[^)]+)\)/);
-    const ticketUrl = ticketMatch ? ticketMatch[1] : null;
+    // Title: text between >...< after the href
+    const titleMatch = lookfwd.match(/>[^<\n]{10,120}</);
+    if (!titleMatch) continue;
+    const title = titleMatch[0].replace(/^>|<$/g, "").trim();
 
-    // Extract category (line after ticket or after image block)
-    const catMatch = block.match(/\n\n(Música|Cine|Escena|Familiar|Arte|Cocina|Literatura|Debate|Deportes|Más)\n\n/i);
+    // Skip navigation items
+    if (["Dónde comer", "Playas y Naturaleza", "Qué hacer", "Arte y cultura", "La guía", "Agenda"].includes(title)) continue;
+    if (title.length < 8) continue;
+
+    // Image: look back for wp-content image
+    const imgMatch = lookback.match(/https:\/\/apuntmenorca\.com\/wp-content\/uploads\/[^\s"')]+\.(?:jpg|jpeg|webp|png)/g);
+    const image = imgMatch ? imgMatch[imgMatch.length - 1] : null;
+
+    // Category: look back for known categories
+    const catMatch = lookback.match(/\n(Música|Cine|Escena|Familiar|Arte|Cocina|Literatura|Debate|Deportes)\n/i);
     const category = catMatch ? catMatch[1] : "Agenda";
 
-    // Extract title and URL — the main event link
-    const titleMatch = block.match(/\n\[([^\]]{10,})\]\((https:\/\/apuntmenorca\.com\/eventos-menorca\/[^)]+)\)/);
-    if (!titleMatch) continue;
-
-    const title = titleMatch[1].trim();
-    const url = titleMatch[2];
-
-    if (seen.has(url)) continue;
-    seen.add(url);
+    // Ticket URL: look for a separate compra-entrada link near this event
+    const ticketMatch = lookback.match(/href="(https:\/\/apuntmenorca\.com\/eventos-menorca\/[^"]+)"[^>]*>\s*\[?Compra/i);
+    const ticketUrl = ticketMatch ? ticketMatch[1] : null;
 
     events.push({ title, url, category, day, month, time, image, ticketUrl });
   }

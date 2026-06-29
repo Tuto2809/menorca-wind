@@ -22,8 +22,11 @@ function degreesToCardinal(deg: number): string {
 }
 
 function isRainyCode(code: number, precipProb: number): boolean {
-  // WMO weather codes: 51-99 are precipitation; also use precipProb > 50%
-  return code >= 51 || precipProb > 50;
+  // WMO codes: 61+ = rain, 71+ = snow, 80+ = showers, 95+ = thunderstorm
+  // Require BOTH a significant weather code AND meaningful precip probability
+  const significantCode = code >= 61;
+  const significantProb = precipProb >= 40;
+  return significantCode && significantProb;
 }
 
 export async function fetchForecast(): Promise<DayForecast[]> {
