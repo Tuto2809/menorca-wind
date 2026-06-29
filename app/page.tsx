@@ -127,6 +127,17 @@ export default function Home() {
   })();
 
   const windName = day ? (t.windNames[day.windDirectionLabel as keyof typeof t.windNames] ?? day.windDirectionLabel) : "";
+
+  // Check if zero results are due to wind direction vs municipality mismatch
+  const emptyReason = (() => {
+    if (!day || beachList.length > 0) return null;
+    const opposites = OPPOSITE_ORIENTATIONS[day.windDirectionLabel as Orientation] ?? [];
+    const allBeaches = BEACHES.filter(b => !filters.municipality || b.municipality === filters.municipality);
+    const windFiltered = allBeaches.filter(b => opposites.includes(b.orientation as Orientation));
+    if (allBeaches.length > 0 && windFiltered.length === 0) return "wind"; // municipality has no sheltered beaches today
+    if (filters.services.length > 0 || filters.type) return "filters"; // too restrictive filters
+    return "filters";
+  })();
   const activeFilterCount = (filters.municipality ? 1 : 0) + (filters.type ? 1 : 0) + filters.services.length + (filters.sortBy !== "recommended" ? 1 : 0);
 
   const C = {
@@ -291,12 +302,47 @@ export default function Home() {
 
             {/* Beach list — all, vertical scroll */}
             {beachList.length === 0 ? (
-              <div className="card" style={{ textAlign:"center", padding:"2rem", color:"#555" }}>
-                <div style={{ fontSize:32, marginBottom:8 }}>🔍</div>
-                <div style={{ fontSize:15 }}>{t.noResults}</div>
-                <button onClick={() => setFilters(DEFAULT_FILTERS)} style={{ marginTop:12, fontSize:14, color:"#0e9fa8", background:"none", border:"none", cursor:"pointer", fontWeight:600 }}>
-                  {t.clearFiltersBtn}
-                </button>
+              <div className="card" style={{ textAlign:"center", padding:"2rem 1.5rem" }}>
+                <div style={{ fontSize:40, marginBottom:12 }}>
+                  {emptyReason === "wind" ? "🧭" : "🔍"}
+                </div>
+                {emptyReason === "wind" ? (
+                  <>
+                    <div style={{ fontSize:15, fontWeight:700, color:"#fff", marginBottom:8 }}>
+                      {lang === "ca" ? "Cap platja recomanada" :
+                       lang === "en" ? "No recommended beaches" :
+                       lang === "fr" ? "Aucune plage recommandée" :
+                       "No hay playas recomendadas"}
+                    </div>
+                    <div style={{ fontSize:13, color:"#666", lineHeight:1.6, marginBottom:14 }}>
+                      {lang === "ca"
+                        ? `Amb vent de ${windName} (${day.windDirectionLabel}), les platges de ${filters.municipality} queden exposades al vent. Prova un altre municipi o un altre dia.`
+                        : lang === "en"
+                        ? `With ${windName} wind (${day.windDirectionLabel}), beaches in ${filters.municipality} face into the wind today. Try another municipality or another day.`
+                        : lang === "fr"
+                        ? `Avec un vent ${windName} (${day.windDirectionLabel}), les plages de ${filters.municipality} sont exposées au vent. Essayez un autre jour ou une autre région.`
+                        : `Con viento ${windName} (${day.windDirectionLabel}), las playas de ${filters.municipality} quedan expuestas al viento hoy. Prueba otro municipio u otro día.`
+                      }
+                    </div>
+                    <div style={{ display:"flex", gap:8, justifyContent:"center", flexWrap:"wrap" }}>
+                      <button onClick={() => setFilters(f => ({ ...f, municipality: null }))}
+                        style={{ padding:"9px 16px", borderRadius:10, background:"#0e9fa8", border:"none", color:"#0a0a0a", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                        {lang === "ca" ? "Veure tots els municipis" :
+                         lang === "en" ? "Show all municipalities" :
+                         lang === "fr" ? "Voir tous les municipalités" :
+                         "Ver todos los municipios"}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ fontSize:15, fontWeight:700, color:"#fff", marginBottom:8 }}>{t.noResults}</div>
+                    <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                      style={{ marginTop:4, padding:"9px 16px", borderRadius:10, background:"#1a1a1a", border:"1.5px solid #2a2a2a", color:"#0e9fa8", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                      {t.clearFiltersBtn}
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
               beachList.map((b, rank) => {
