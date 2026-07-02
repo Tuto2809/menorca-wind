@@ -402,7 +402,7 @@ export default function Home() {
                           </div>
                         )}
                       </div>
-                      <div style={{ fontSize:12, color:"#555", marginTop:2 }}>{b.municipality} · {b.length}</div>
+                      <div style={{ fontSize:12, color:"#555", marginTop:2 }}>{b.municipality}</div>
                       <div style={{ fontSize:12, color:"#777", marginTop:5, lineHeight:1.45 }}>{beachDesc}</div>
                       <div style={{ display:"flex", gap:5, marginTop:7, flexWrap:"wrap", alignItems:"center" }}>
                         <span className="tag tag-teal">🧭 {t.orientation} {b.orientation}</span>
