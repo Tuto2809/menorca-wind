@@ -137,10 +137,20 @@ export default function Home() {
         }
         setPushEnabled(true);
         // Save to Supabase
+        // Generate a unique device ID stored in localStorage
+        let deviceId = localStorage.getItem("menorca_device_id");
+        if (!deviceId) {
+          deviceId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
+          localStorage.setItem("menorca_device_id", deviceId);
+        }
         await fetch("/api/push", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: window.location.origin, p256dh: "pending", auth: "pending" }),
+          body: JSON.stringify({
+            endpoint: `${window.location.origin}#${deviceId}`,
+            p256dh: "phase1",
+            auth: "phase1",
+          }),
         }).catch(() => {});
       } else if (permission === "denied") {
         alert("Notificaciones bloqueadas. Ve a Ajustes → Playas de Menorca → Notificaciones y actívalas.");
