@@ -114,31 +114,43 @@ export default function Home() {
   }, []);
 
   const subscribePush = async () => {
-    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-      alert("Tu navegador no soporta notificaciones push. Asegúrate de tener la app instalada en la pantalla de inicio.");
+    // iOS PWA: Notification must be called synchronously from user gesture
+    // so we request permission FIRST, then register SW
+    if (!("Notification" in window)) {
+      alert("Notificaciones no disponibles. Asegúrate de tener la app instalada desde Safari → Añadir a pantalla de inicio.");
       return;
     }
+
     setPushLoading(true);
     try {
-      // Register service worker first
-      const reg = await navigator.serviceWorker.register("/sw.js");
-      await navigator.serviceWorker.ready;
-
-      // Request permission
+      // Step 1: request permission immediately (must be direct from user gesture)
       const permission = await Notification.requestPermission();
+
       if (permission === "granted") {
+        // Step 2: register service worker after permission granted
+        if ("serviceWorker" in navigator) {
+          try {
+            await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+          } catch (swErr) {
+            console.warn("SW registration failed:", swErr);
+          }
+        }
         setPushEnabled(true);
-        // Log subscription (full VAPID in next phase)
+        // Save to Supabase
         await fetch("/api/push", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: reg.scope, p256dh: "pending", auth: "pending" }),
+          body: JSON.stringify({ endpoint: window.location.origin, p256dh: "pending", auth: "pending" }),
         }).catch(() => {});
       } else if (permission === "denied") {
-        alert("Has bloqueado las notificaciones. Ve a Ajustes del iPhone → Playas de Menorca → Notificaciones para activarlas.");
+        alert("Notificaciones bloqueadas. Ve a Ajustes → Playas de Menorca → Notificaciones y actívalas.");
+      } else {
+        // "default" — user dismissed without choosing
+        alert("Pulsa \"Permitir\" cuando aparezca el diálogo para recibir alertas.");
       }
     } catch (e) {
       console.error("Push error:", e);
+      alert("Error activando notificaciones: " + String(e));
     }
     setPushLoading(false);
   };
@@ -223,6 +235,32 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        {/* Push banner — visible immediately on open */}
+        {!pushEnabled && (
+          <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 0 2px" }}>
+            <span style={{ fontSize:16, flexShrink:0 }}>🔔</span>
+            <div style={{ flex:1 }}>
+              <span style={{ fontSize:12, color:"#888" }}>
+                {lang === "ca" ? "Rep alertes de vent al mòbil" : lang === "en" ? "Get wind alerts on your phone" : lang === "fr" ? "Alertes vent sur votre téléphone" : "Recibe alertas de viento en el móvil"}
+              </span>
+            </div>
+            <button
+              onClick={subscribePush}
+              disabled={pushLoading}
+              style={{ flexShrink:0, padding:"6px 14px", borderRadius:8, border:"1.5px solid #0e9fa8", background:"transparent", color:"#0e9fa8", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
+              {pushLoading ? "..." : lang === "ca" ? "Activar" : lang === "en" ? "Enable" : lang === "fr" ? "Activer" : "Activar"}
+            </button>
+          </div>
+        )}
+        {pushEnabled && (
+          <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 0 2px" }}>
+            <span style={{ fontSize:14 }}>✅</span>
+            <span style={{ fontSize:12, color:"#34d399", fontWeight:600 }}>
+              {lang === "ca" ? "Alertes activades" : lang === "en" ? "Alerts enabled" : lang === "fr" ? "Alertes activées" : "Alertas activadas"}
+            </span>
+          </div>
+        )}
       </div>
 
       <div style={{ maxWidth:640, margin:"0 auto", padding:"18px 14px" }}>
@@ -465,35 +503,6 @@ export default function Home() {
                   </div>
                 );
               })
-            )}
-
-            {/* Push notification banner */}
-            {!pushEnabled && (
-              <div style={{ background:"#0a0a0a", border:"1.5px solid #2a2a2a", borderRadius:14, padding:"12px 14px", marginTop:8, marginBottom:8, display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ fontSize:22, flexShrink:0 }}>🔔</div>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:"#fff" }}>
-                    {lang === "ca" ? "Rep alertes de vent" : lang === "en" ? "Get wind alerts" : lang === "fr" ? "Recevoir des alertes vent" : "Recibe alertas de viento"}
-                  </div>
-                  <div style={{ fontSize:11, color:"#555", marginTop:2 }}>
-                    {lang === "ca" ? "T'avisem quan el vent canviï" : lang === "en" ? "We'll notify you when wind changes" : lang === "fr" ? "Nous vous alertons quand le vent change" : "Te avisamos cuando cambie el viento"}
-                  </div>
-                </div>
-                <button
-                  onClick={subscribePush}
-                  disabled={pushLoading}
-                  style={{ flexShrink:0, padding:"7px 12px", borderRadius:9, border:"none", background:"#0e9fa8", color:"#0a0a0a", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  {pushLoading ? "..." : lang === "ca" ? "Activar" : lang === "en" ? "Enable" : lang === "fr" ? "Activer" : "Activar"}
-                </button>
-              </div>
-            )}
-            {pushEnabled && (
-              <div style={{ background:"#0e2a1a", border:"1.5px solid #1a3a2a", borderRadius:14, padding:"10px 14px", marginTop:8, marginBottom:8, display:"flex", alignItems:"center", gap:10 }}>
-                <span style={{ fontSize:18 }}>✅</span>
-                <span style={{ fontSize:13, color:"#34d399", fontWeight:600 }}>
-                  {lang === "ca" ? "Alertes activades" : lang === "en" ? "Alerts enabled" : lang === "fr" ? "Alertes activées" : "Alertas activadas"}
-                </span>
-              </div>
             )}
 
             {/* Jellyfish */}
