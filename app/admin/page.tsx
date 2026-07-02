@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Stats {
   total: number; today: number; week: number;
@@ -22,12 +22,25 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [authed, setAuthed] = useState(false);
 
+  // Auto-login if session still active
+  useEffect(() => {
+    const saved = sessionStorage.getItem("admin_pwd");
+    if (saved) {
+      fetch(`/api/stats?pwd=${encodeURIComponent(saved)}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d) { setStats(d); setPwd(saved); setAuthed(true); } });
+    }
+  }, []);
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError("");
     const res = await fetch(`/api/stats?pwd=${encodeURIComponent(pwd)}`);
-    if (res.ok) { setStats(await res.json()); setAuthed(true); }
-    else setError("Contraseña incorrecta");
+    if (res.ok) {
+      setStats(await res.json());
+      setAuthed(true);
+      sessionStorage.setItem("admin_pwd", pwd);
+    } else setError("Contraseña incorrecta");
     setLoading(false);
   }
 
