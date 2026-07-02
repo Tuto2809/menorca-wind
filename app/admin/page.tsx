@@ -6,6 +6,8 @@ interface Stats {
   byDevice: Record<string, number>;
   byOS: Record<string, number>;
   byDay: { created_at: string }[];
+  pushTotal: number;
+  pushActive: number;
 }
 
 const S = {
@@ -71,13 +73,32 @@ export default function AdminPage() {
       <div style={{ maxWidth: 700, margin: "0 auto", padding: "18px 14px" }}>
         {/* Metrics */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 16 }}>
-          {[{ label: "Hoy", value: stats?.today ?? 0, icon: "📅" }, { label: "Esta semana", value: stats?.week ?? 0, icon: "📆" }, { label: "Total", value: stats?.total ?? 0, icon: "📊" }].map(m => (
+          {[
+          { label: "Hoy", value: stats?.today ?? 0, icon: "📅" },
+          { label: "Esta semana", value: stats?.week ?? 0, icon: "📆" },
+          { label: "Total consultas", value: stats?.total ?? 0, icon: "📊" },
+        ].map(m => (
             <div key={m.label} style={{ background: S.card, border: `1.5px solid ${S.border}`, borderRadius: 12, padding: "14px", textAlign: "center" }}>
               <div style={{ fontSize: 20 }}>{m.icon}</div>
               <div style={{ fontSize: 26, fontWeight: 700, color: S.accent }}>{m.value}</div>
               <div style={{ fontSize: 11, color: S.muted, marginTop: 3 }}>{m.label}</div>
             </div>
           ))}
+        </div>
+
+        {/* Push subscribers highlight */}
+        <div style={{ background:"#071e20", border:"1.5px solid #0e3038", borderRadius:14, padding:"16px 20px", marginBottom:16, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            <div style={{ fontSize:28 }}>🔔</div>
+            <div>
+              <div style={{ fontSize:13, color:"#0e9fa8", fontWeight:600, textTransform:"uppercase", letterSpacing:".06em" }}>Suscriptores de alertas push</div>
+              <div style={{ fontSize:12, color:"#555", marginTop:3 }}>Usuarios que han activado las notificaciones</div>
+            </div>
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontSize:36, fontWeight:800, color:"#0e9fa8", lineHeight:1 }}>{stats?.pushActive ?? 0}</div>
+            <div style={{ fontSize:11, color:"#555", marginTop:3 }}>activos · {stats?.pushTotal ?? 0} total</div>
+          </div>
         </div>
 
         {/* Bar chart */}

@@ -71,6 +71,8 @@ export default function Home() {
   const [locationError, setLocationError] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [shareBeach, setShareBeach] = useState<string | null>(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
 
 
   useEffect(() => {
@@ -110,6 +112,22 @@ export default function Home() {
       () => setLocationError("No se pudo obtener la ubicación")
     );
   }, []);
+
+  const subscribePush = async () => {
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
+    setPushLoading(true);
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") { setPushLoading(false); return; }
+      // For now just mark as enabled — full VAPID push in next phase
+      setPushEnabled(true);
+      // Register minimal service worker if not already
+      if ("serviceWorker" in navigator) {
+        await navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
+    } catch (e) { console.error(e); }
+    setPushLoading(false);
+  };
 
   const beachList = (() => {
     if (!day) return [];
@@ -426,6 +444,35 @@ export default function Home() {
                   </div>
                 );
               })
+            )}
+
+            {/* Push notification banner */}
+            {!pushEnabled && (
+              <div style={{ background:"#0a0a0a", border:"1.5px solid #2a2a2a", borderRadius:14, padding:"12px 14px", marginTop:8, marginBottom:8, display:"flex", alignItems:"center", gap:12 }}>
+                <div style={{ fontSize:22, flexShrink:0 }}>🔔</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:"#fff" }}>
+                    {lang === "ca" ? "Rep alertes de vent" : lang === "en" ? "Get wind alerts" : lang === "fr" ? "Recevoir des alertes vent" : "Recibe alertas de viento"}
+                  </div>
+                  <div style={{ fontSize:11, color:"#555", marginTop:2 }}>
+                    {lang === "ca" ? "T'avisem quan el vent canviï" : lang === "en" ? "We'll notify you when wind changes" : lang === "fr" ? "Nous vous alertons quand le vent change" : "Te avisamos cuando cambie el viento"}
+                  </div>
+                </div>
+                <button
+                  onClick={subscribePush}
+                  disabled={pushLoading}
+                  style={{ flexShrink:0, padding:"7px 12px", borderRadius:9, border:"none", background:"#0e9fa8", color:"#0a0a0a", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  {pushLoading ? "..." : lang === "ca" ? "Activar" : lang === "en" ? "Enable" : lang === "fr" ? "Activer" : "Activar"}
+                </button>
+              </div>
+            )}
+            {pushEnabled && (
+              <div style={{ background:"#0e2a1a", border:"1.5px solid #1a3a2a", borderRadius:14, padding:"10px 14px", marginTop:8, marginBottom:8, display:"flex", alignItems:"center", gap:10 }}>
+                <span style={{ fontSize:18 }}>✅</span>
+                <span style={{ fontSize:13, color:"#34d399", fontWeight:600 }}>
+                  {lang === "ca" ? "Alertes activades" : lang === "en" ? "Alerts enabled" : lang === "fr" ? "Alertes activées" : "Alertas activadas"}
+                </span>
+              </div>
             )}
 
             {/* Jellyfish */}

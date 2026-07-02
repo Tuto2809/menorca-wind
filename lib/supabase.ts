@@ -30,13 +30,15 @@ export async function getStats() {
   weekAgo.setDate(now.getDate() - 7);
   const weekStr = weekAgo.toISOString().slice(0, 10);
 
-  const [total, today, week, byDevice, byOS, byDay] = await Promise.all([
+  const [total, today, week, byDevice, byOS, byDay, pushTotal, pushActive] = await Promise.all([
     supabase.from("consultas").select("id", { count: "exact", head: true }),
     supabase.from("consultas").select("id", { count: "exact", head: true }).gte("created_at", todayStr),
     supabase.from("consultas").select("id", { count: "exact", head: true }).gte("created_at", weekStr),
     supabase.from("consultas").select("device_type"),
     supabase.from("consultas").select("os"),
     supabase.from("consultas").select("created_at").gte("created_at", weekStr).order("created_at"),
+    supabase.from("push_subscriptions").select("id", { count: "exact", head: true }),
+    supabase.from("push_subscriptions").select("id", { count: "exact", head: true }).eq("active", true),
   ]);
 
   return {
@@ -46,6 +48,8 @@ export async function getStats() {
     byDevice: countBy(byDevice.data ?? [], "device_type"),
     byOS: countBy(byOS.data ?? [], "os"),
     byDay: byDay.data ?? [],
+    pushTotal: pushTotal.count ?? 0,
+    pushActive: pushActive.count ?? 0,
   };
 }
 
