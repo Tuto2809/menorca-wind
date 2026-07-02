@@ -114,20 +114,41 @@ export default function Home() {
   }, []);
 
   const subscribePush = async () => {
-    if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+      alert("Tu navegador no soporta notificaciones push. Asegúrate de tener la app instalada en la pantalla de inicio.");
+      return;
+    }
     setPushLoading(true);
     try {
+      // Register service worker first
+      const reg = await navigator.serviceWorker.register("/sw.js");
+      await navigator.serviceWorker.ready;
+
+      // Request permission
       const permission = await Notification.requestPermission();
-      if (permission !== "granted") { setPushLoading(false); return; }
-      // For now just mark as enabled — full VAPID push in next phase
-      setPushEnabled(true);
-      // Register minimal service worker if not already
-      if ("serviceWorker" in navigator) {
-        await navigator.serviceWorker.register("/sw.js").catch(() => {});
+      if (permission === "granted") {
+        setPushEnabled(true);
+        // Log subscription (full VAPID in next phase)
+        await fetch("/api/push", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: reg.scope, p256dh: "pending", auth: "pending" }),
+        }).catch(() => {});
+      } else if (permission === "denied") {
+        alert("Has bloqueado las notificaciones. Ve a Ajustes del iPhone → Playas de Menorca → Notificaciones para activarlas.");
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error("Push error:", e);
+    }
     setPushLoading(false);
   };
+
+  // Check if already subscribed on mount
+  useEffect(() => {
+    if ("serviceWorker" in navigator && "Notification" in window) {
+      if (Notification.permission === "granted") setPushEnabled(true);
+    }
+  }, []);
 
   const beachList = (() => {
     if (!day) return [];
