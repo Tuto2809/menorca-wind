@@ -372,40 +372,6 @@ export default function Home() {
             </span>
           </div>
         )}
-        {/* Search panel */}
-        {showSearch && (
-          <div style={{ paddingTop:10 }}>
-            <input
-              autoFocus
-              type="search"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder={lang === "ca" ? "Cerca una platja o municipi..." : lang === "en" ? "Search a beach or municipality..." : lang === "fr" ? "Rechercher une plage ou commune..." : "Busca una playa o municipio..."}
-              style={{ width:"100%", padding:"11px 14px", borderRadius:10, border:"1.5px solid #2a2a2a", background:"#1a1a1a", color:"#fff", fontSize:15, outline:"none", boxSizing:"border-box" as const }}
-            />
-            {searchQuery.trim().length > 1 && (
-              <div style={{ marginTop:8, display:"flex", flexDirection:"column", gap:6 }}>
-                {searchResults.length === 0 ? (
-                  <div style={{ padding:"12px 0", fontSize:13, color:"#555", textAlign:"center" }}>
-                    {lang === "ca" ? "Cap resultat" : lang === "en" ? "No results" : lang === "fr" ? "Aucun résultat" : "Sin resultados"}
-                  </div>
-                ) : searchResults.map(b => (
-                  <button key={b.name} onClick={() => { setSelectedBeach(b); setShowSearch(false); setSearchQuery(""); }}
-                    style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:10, border:"1.5px solid #252525", background:"#141414", cursor:"pointer", textAlign:"left" as const }}>
-                    <div style={{ width:36, height:36, borderRadius:9, background:"#071e20", border:"1.5px solid #0e3038", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🏝️</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:"#fff" }}>{b.name}</div>
-                      <div style={{ fontSize:12, color:"#555", marginTop:1 }}>{b.municipality}</div>
-                    </div>
-                    <div style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#071e20", color:"#0e9fa8", fontWeight:600 }}>
-                      {t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       <div style={{ maxWidth:640, margin:"0 auto", padding:"18px 14px" }}>
