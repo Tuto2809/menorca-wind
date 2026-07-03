@@ -17,6 +17,8 @@ interface PushMessage {
 }
 
 interface PushConfig { [key: string]: string; }
+interface BeachReport { id: number; beach_name: string; report_type: string; message: string; status: string; created_at: string; }
+interface BeachEdit { name: string; description: string; photo: string; lat: number; lon: number; }
 
 const S = {
   bg: "#0a0a0a", card: "#141414", border: "#2a2a2a",
@@ -29,7 +31,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   sent:     { label: "Enviado",   color: "#34d399", bg: "#0e2a1a" },
 };
 
-type Tab = "stats" | "messages" | "auto";
+type Tab = "stats" | "messages" | "auto" | "reports" | "beaches";
 
 export default function AdminPage() {
   const [pwd, setPwd] = useState("");
@@ -44,6 +46,8 @@ export default function AdminPage() {
   const [sendingId, setSendingId] = useState<number | null>(null);
   const [configSaving, setConfigSaving] = useState(false);
   const [autoTestResult, setAutoTestResult] = useState<string | null>(null);
+  const [reports, setReports] = useState<BeachReport[]>([]);
+  const [beachEdit, setBeachEdit] = useState<BeachEdit | null>(null);
 
   useEffect(() => {
     const saved = sessionStorage.getItem("admin_pwd");
@@ -51,16 +55,18 @@ export default function AdminPage() {
   }, []);
 
   async function loadAll(p: string) {
-    const [statsRes, msgsRes, cfgRes] = await Promise.all([
+    const [statsRes, msgsRes, cfgRes, repsRes] = await Promise.all([
       fetch(`/api/stats?pwd=${encodeURIComponent(p)}`),
       fetch(`/api/push/messages?pwd=${encodeURIComponent(p)}`),
       fetch(`/api/push/config?pwd=${encodeURIComponent(p)}`),
+      fetch(`/api/report?pwd=${encodeURIComponent(p)}`),
     ]);
     if (!statsRes.ok) return false;
-    const [s, m, c] = await Promise.all([statsRes.json(), msgsRes.json(), cfgRes.json()]);
+    const [s, m, c, r] = await Promise.all([statsRes.json(), msgsRes.json(), cfgRes.json(), repsRes.json()]);
     setStats(s);
     setMessages(m.messages ?? []);
     setConfig(c.config ?? {});
+    setReports(r.reports ?? []);
     return true;
   }
 
@@ -207,6 +213,7 @@ export default function AdminPage() {
           <button style={tabStyle("stats")}   onClick={() => setTab("stats")}>📊 Estadísticas</button>
           <button style={tabStyle("messages")} onClick={() => setTab("messages")}>📨 Mensajes</button>
           <button style={tabStyle("auto")}    onClick={() => setTab("auto")}>⚙️ Automático</button>
+          <button style={tabStyle("reports")} onClick={() => setTab("reports")}>⚠️ Reportes{reports.filter(r=>r.status==="pending").length > 0 ? ` (${reports.filter(r=>r.status==="pending").length})` : ""}</button>
         </div>
 
         <div style={{ background:S.card, border:`1.5px solid ${S.border}`, borderTop:"none", borderRadius:"0 0 14px 14px", padding:"1.2rem", marginBottom:16 }}>
@@ -362,6 +369,47 @@ export default function AdminPage() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── REPORTS TAB ── */}
+          {tab === "reports" && (
+            <div>
+              <div style={{ fontSize:14, fontWeight:700, color:S.text, marginBottom:14 }}>⚠️ Reportes de usuarios</div>
+              {reports.length === 0 ? (
+                <div style={{ textAlign:"center", padding:"2rem", color:S.muted, fontSize:13 }}>No hay reportes aún</div>
+              ) : (
+                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                  {reports.map(r => (
+                    <div key={r.id} style={{ background:"#0f0f0f", border:`1.5px solid ${r.status==="pending" ? "#2a2400" : S.border}`, borderRadius:10, padding:"12px 14px" }}>
+                      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:8 }}>
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
+                            <span style={{ fontSize:13, fontWeight:700, color:S.text }}>{r.beach_name}</span>
+                            <span style={{ fontSize:10, padding:"2px 7px", borderRadius:5, background: r.status==="pending" ? "#1a1500" : "#0e2a1a", color: r.status==="pending" ? "#fbbf24" : "#34d399", fontWeight:600 }}>
+                              {r.status === "pending" ? "Pendiente" : "Resuelto"}
+                            </span>
+                            <span style={{ fontSize:10, padding:"2px 7px", borderRadius:5, background:"#1a1a1a", color:"#777" }}>{r.report_type}</span>
+                          </div>
+                          <div style={{ fontSize:13, color:S.muted, marginBottom:4 }}>{r.message}</div>
+                          <div style={{ fontSize:10, color:S.sub }}>{new Date(r.created_at).toLocaleString("es")}</div>
+                        </div>
+                        {r.status === "pending" && (
+                          <button onClick={async () => {
+                            await fetch(`/api/report?pwd=${encodeURIComponent(pwd)}`, {
+                              method:"PATCH", headers:{"Content-Type":"application/json"},
+                              body: JSON.stringify({ id: r.id, status: "resolved" }),
+                            });
+                            await loadAll(pwd);
+                          }} style={{ padding:"5px 10px", borderRadius:7, border:`1.5px solid #1a3a2a`, background:"#0e2a1a", color:"#34d399", fontSize:12, cursor:"pointer", flexShrink:0 }}>
+                            ✓ Resolver
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

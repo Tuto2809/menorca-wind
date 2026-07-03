@@ -72,6 +72,11 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(false);
   const [shareBeach, setShareBeach] = useState<string | null>(null);
   const [selectedBeach, setSelectedBeach] = useState<typeof BEACHES[0] | null>(null);
+  const [reportBeach, setReportBeach] = useState<string | null>(null);
+  const [reportType, setReportType] = useState("foto");
+  const [reportMsg, setReportMsg] = useState("");
+  const [reportSending, setReportSending] = useState(false);
+  const [reportSent, setReportSent] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
 
@@ -184,6 +189,23 @@ export default function Home() {
       if (Notification.permission === "granted") setPushEnabled(true);
     }
   }, []);
+
+  const sendReport = async () => {
+    if (!reportBeach || !reportMsg.trim()) return;
+    setReportSending(true);
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ beach_name: reportBeach, report_type: reportType, message: reportMsg }),
+      });
+      if ((await res.json()).ok) {
+        setReportSent(true);
+        setTimeout(() => { setReportBeach(null); setReportSent(false); setReportMsg(""); }, 2000);
+      }
+    } catch (e) { console.error(e); }
+    setReportSending(false);
+  };
 
   const beachList = (() => {
     if (!day) return [];
@@ -544,6 +566,60 @@ export default function Home() {
         )}
       </div>
 
+      {/* Report error modal */}
+      {reportBeach && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:60, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+          onClick={() => setReportBeach(null)}>
+          <div style={{ background:"#141414", borderRadius:"20px 20px 0 0", width:"100%", maxWidth:640, padding:"24px 20px 40px" }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+              <div style={{ fontSize:16, fontWeight:700, color:"#fff" }}>⚠️ Notificar error — {reportBeach}</div>
+              <button onClick={() => setReportBeach(null)} style={{ background:"none", border:"none", color:"#555", fontSize:20, cursor:"pointer" }}>✕</button>
+            </div>
+            {reportSent ? (
+              <div style={{ textAlign:"center", padding:"20px 0" }}>
+                <div style={{ fontSize:32, marginBottom:8 }}>✅</div>
+                <div style={{ fontSize:15, color:"#34d399", fontWeight:600 }}>
+                  {lang === "ca" ? "Gràcies! Ho revisarem aviat." : lang === "en" ? "Thanks! We'll review it soon." : lang === "fr" ? "Merci! Nous allons vérifier." : "¡Gracias! Lo revisaremos pronto."}
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ marginBottom:12 }}>
+                  <div style={{ fontSize:12, color:"#555", marginBottom:8, fontWeight:600, textTransform:"uppercase", letterSpacing:".06em" }}>
+                    {lang === "ca" ? "Tipus d'error" : lang === "en" ? "Error type" : lang === "fr" ? "Type d'erreur" : "Tipo de error"}
+                  </div>
+                  <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                    {[
+                      { key:"foto", label: lang === "ca" ? "Foto incorrecta" : lang === "en" ? "Wrong photo" : lang === "fr" ? "Photo incorrecte" : "Foto incorrecta" },
+                      { key:"info", label: lang === "ca" ? "Informació errònia" : lang === "en" ? "Wrong info" : lang === "fr" ? "Info incorrecte" : "Información errónea" },
+                      { key:"ubicacion", label: lang === "ca" ? "Ubicació incorrecta" : lang === "en" ? "Wrong location" : lang === "fr" ? "Localisation incorrecte" : "Ubicación incorrecta" },
+                      { key:"otro", label: lang === "ca" ? "Altre" : lang === "en" ? "Other" : lang === "fr" ? "Autre" : "Otro" },
+                    ].map(opt => (
+                      <button key={opt.key} onClick={() => setReportType(opt.key)}
+                        style={{ padding:"7px 14px", borderRadius:99, border: reportType === opt.key ? "1.5px solid #0e9fa8" : "1.5px solid #2a2a2a", background: reportType === opt.key ? "#071e20" : "transparent", color: reportType === opt.key ? "#0e9fa8" : "#888", fontSize:13, fontWeight:600, cursor:"pointer" }}>
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <textarea
+                  placeholder={lang === "ca" ? "Descriu l'error amb detall..." : lang === "en" ? "Describe the error in detail..." : lang === "fr" ? "Décrivez l'erreur en détail..." : "Describe el error con detalle..."}
+                  value={reportMsg}
+                  onChange={e => setReportMsg(e.target.value)}
+                  rows={4}
+                  style={{ width:"100%", padding:"12px", borderRadius:10, border:"1.5px solid #2a2a2a", background:"#1a1a1a", color:"#fff", fontSize:14, outline:"none", resize:"none", marginBottom:14, boxSizing:"border-box" as const }}
+                />
+                <button onClick={sendReport} disabled={reportSending || !reportMsg.trim()}
+                  style={{ width:"100%", padding:"14px", borderRadius:12, border:"none", background: reportMsg.trim() ? "#0e9fa8" : "#2a2a2a", color: reportMsg.trim() ? "#0a0a0a" : "#555", fontSize:15, fontWeight:700, cursor: reportMsg.trim() ? "pointer" : "not-allowed" }}>
+                  {reportSending ? "..." : lang === "ca" ? "Enviar reporte" : lang === "en" ? "Send report" : lang === "fr" ? "Envoyer le rapport" : "Enviar reporte"}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Beach detail modal */}
       {selectedBeach && (() => {
         const b = selectedBeach;
@@ -621,6 +697,13 @@ export default function Home() {
                     📤 {lang === "ca" ? "Compartir" : lang === "en" ? "Share" : lang === "fr" ? "Partager" : "Compartir"}
                   </button>
                 </div>
+
+                {/* Report error button */}
+                <button
+                  onClick={() => { setReportBeach(b.name); setReportMsg(""); setReportType("foto"); }}
+                  style={{ marginTop:16, width:"100%", padding:"8px", borderRadius:10, border:"1.5px solid #2a2a2a", background:"transparent", color:"#555", fontSize:12, cursor:"pointer" }}>
+                  ⚠️ {lang === "ca" ? "Notificar un error" : lang === "en" ? "Report an error" : lang === "fr" ? "Signaler une erreur" : "Notificar un error"}
+                </button>
               </div>
             </div>
           </div>
