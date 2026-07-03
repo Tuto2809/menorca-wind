@@ -34,6 +34,8 @@ create policy "select_all" on consultas for select using (true);
 NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 ADMIN_PASSWORD=Bini_3668
+
+
 ```
 
 ## Despliegue Vercel
