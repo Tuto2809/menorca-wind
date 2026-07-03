@@ -137,25 +137,22 @@ export default function Home() {
         }
         setPushEnabled(true);
         // Save to Supabase
-        // Generate a unique device ID stored in localStorage
-        let deviceId = localStorage.getItem("menorca_device_id");
-        if (!deviceId) {
-          deviceId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
-          localStorage.setItem("menorca_device_id", deviceId);
-        }
-        const pushRes = await fetch("/api/push", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            endpoint: `${window.location.origin}#${deviceId}`,
-            p256dh: "phase1",
-            auth: "phase1",
-          }),
-        });
-        if (!pushRes.ok) {
-          const errData = await pushRes.json().catch(() => ({}));
-          console.error("Push save error:", pushRes.status, errData);
-          // Still show as enabled locally even if save fails
+        // Simple unique ID using timestamp + random (no crypto dependency)
+        const deviceId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        try {
+          const pushRes = await fetch("/api/push", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              endpoint: `${window.location.origin}#${deviceId}`,
+              p256dh: "phase1",
+              auth: "phase1",
+            }),
+          });
+          const pushData = await pushRes.json();
+          console.log("Push register result:", pushData);
+        } catch (fetchErr) {
+          console.error("Push fetch failed:", fetchErr);
         }
       } else if (permission === "denied") {
         alert("Notificaciones bloqueadas. Ve a Ajustes → Playas de Menorca → Notificaciones y actívalas.");
