@@ -1,6 +1,6 @@
 {
   "name": "Playas de Menorca",
-  "short_name": "Playas Menorca",
+  "short_name": "Playas de Menorca",
   "description": "¿Dónde voy según el viento? Recomendaciones de playa en tiempo real.",
   "start_url": "/",
   "display": "standalone",
@@ -22,6 +22,10 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["travel", "weather", "lifestyle"],
+  "categories": [
+    "travel",
+    "weather",
+    "lifestyle"
+  ],
   "screenshots": []
 }
