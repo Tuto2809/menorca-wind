@@ -333,7 +333,7 @@ export default function AdminPage() {
                           </div>
                           <div style={{ display:"flex", gap:5, flexShrink:0 }}>
                             <button onClick={() => setEditMsg(msg)} style={{ padding:"5px 10px", borderRadius:7, border:`1.5px solid ${S.border}`, background:"transparent", color:S.muted, fontSize:12, cursor:"pointer" }}>✏️</button>
-                            <button onClick={() => sendMessage(msg)} disabled={sendingId === msg.id}
+                            <button onClick={(e) => { e.stopPropagation(); sendMessage(msg); }} disabled={sendingId === msg.id}
                               style={{ padding:"5px 10px", borderRadius:7, border:"none", background:S.accent, color:"#0a0a0a", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                               {sendingId === msg.id ? "..." : "📤"}
                             </button>
