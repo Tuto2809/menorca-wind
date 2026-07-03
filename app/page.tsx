@@ -72,6 +72,8 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(false);
   const [shareBeach, setShareBeach] = useState<string | null>(null);
   const [selectedBeach, setSelectedBeach] = useState<typeof BEACHES[0] | null>(null);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [reportBeach, setReportBeach] = useState<string | null>(null);
   const [beachOverrides, setBeachOverrides] = useState<Record<string,{photo?:string;description?:string}>>({});
   const [reportType, setReportType] = useState("foto");
@@ -232,6 +234,13 @@ export default function Home() {
 
   const windName = day ? (t.windNames[day.windDirectionLabel as keyof typeof t.windNames] ?? day.windDirectionLabel) : "";
 
+  const searchResults = searchQuery.trim().length >= 2
+    ? BEACHES.filter(b => {
+        const q = searchQuery.toLowerCase().trim();
+        return b.name.toLowerCase().includes(q) || b.municipality.toLowerCase().includes(q);
+      }).slice(0, 10)
+    : [];
+
   // Check if zero results are due to wind direction vs municipality mismatch
   const emptyReason = (() => {
     if (!day || beachList.length > 0) return null;
@@ -242,6 +251,8 @@ export default function Home() {
     if (filters.services.length > 0 || filters.type) return "filters"; // too restrictive filters
     return "filters";
   })();
+
+
   const activeFilterCount = (filters.municipality ? 1 : 0) + (filters.type ? 1 : 0) + filters.services.length + (filters.sortBy !== "recommended" ? 1 : 0);
 
   const C = {
@@ -273,21 +284,68 @@ export default function Home() {
       {/* Topbar */}
       <div style={C.topbar}>
         <div style={{ maxWidth:640, margin:"0 auto" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-            <div style={{ width:42, height:42, borderRadius:12, background:"#0e9fa8", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>🌊</div>
-            <div>
-              <div style={C.appName}>Playas de Menorca</div>
-              <div style={C.appClaim}>¿Dónde voy según el viento?</div>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+              <div style={{ width:42, height:42, borderRadius:12, background:"#0e9fa8", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>🌊</div>
+              <div>
+                <div style={C.appName}>Playas de Menorca</div>
+                <div style={C.appClaim}>
+                  {lang === "ca" ? "On vaig segons el vent?" : lang === "en" ? "Where to go by the wind?" : lang === "fr" ? "Où aller selon le vent ?" : "¿Dónde voy según el viento?"}
+                </div>
+              </div>
             </div>
+            <button onClick={() => { setShowSearch(v => !v); setSearchQuery(""); }}
+              style={{ width:40, height:40, borderRadius:11, border:"1.5px solid #2a2a2a", background: showSearch ? "#0e9fa8" : "#1a1a1a", color: showSearch ? "#0a0a0a" : "#888", fontSize:20, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              🔍
+            </button>
           </div>
           <div style={C.langRow}>
-            {(["ca","es","en","fr"] as Lang[]).map(l => (
-              <button key={l} onClick={() => setLang(l)} style={C.langBtn(lang === l)} title={LANG_LABELS[l]}>
-                {LANG_FLAGS[l]}
+            {([
+              { code:"ca", label:"CAT" },
+              { code:"es", label:"ESP" },
+              { code:"en", label:"ENG" },
+              { code:"fr", label:"FRA" },
+            ] as {code:Lang, label:string}[]).map(l => (
+              <button key={l.code} onClick={() => setLang(l.code)} style={C.langBtn(lang === l.code)} title={LANG_LABELS[l.code]}>
+                {l.label}
               </button>
             ))}
           </div>
         </div>
+
+        {/* Search panel */}
+        {showSearch && (
+          <div style={{ marginTop:10 }}>
+            <input
+              autoFocus
+              type="search"
+              placeholder={lang === "ca" ? "Cerca una platja o municipi..." : lang === "en" ? "Search a beach or municipality..." : lang === "fr" ? "Chercher une plage ou municipalité..." : "Buscar playa o municipio..."}
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{ width:"100%", padding:"11px 14px", borderRadius:11, border:"1.5px solid #0e9fa8", background:"#1a1a1a", color:"#fff", fontSize:15, outline:"none", boxSizing:"border-box" as const }}
+            />
+            {searchQuery.trim().length >= 2 && (
+              <div style={{ background:"#141414", border:"1.5px solid #2a2a2a", borderRadius:12, marginTop:6, overflow:"hidden" }}>
+                {searchResults.length === 0 ? (
+                  <div style={{ padding:"14px", fontSize:14, color:"#555", textAlign:"center" }}>
+                    {lang === "ca" ? "Cap resultat" : lang === "en" ? "No results" : lang === "fr" ? "Aucun résultat" : "Sin resultados"}
+                  </div>
+                ) : searchResults.map((b, i) => (
+                  <div key={b.name}
+                    onClick={() => { setSelectedBeach(b); setShowSearch(false); setSearchQuery(""); }}
+                    style={{ display:"flex", alignItems:"center", gap:12, padding:"11px 14px", borderBottom: i < searchResults.length-1 ? "1px solid #1e1e1e" : "none", cursor:"pointer" }}>
+                    <div style={{ width:36, height:36, borderRadius:9, background:"#071e20", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🏝️</div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:14, fontWeight:600, color:"#fff" }}>{b.name}</div>
+                      <div style={{ fontSize:12, color:"#555", marginTop:1 }}>{b.municipality}</div>
+                    </div>
+                    <div style={{ fontSize:11, color:"#0e9fa8", fontWeight:600 }}>{b.orientation}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Push banner — visible immediately on open */}
         {!pushEnabled && (
@@ -312,6 +370,40 @@ export default function Home() {
             <span style={{ fontSize:12, color:"#34d399", fontWeight:600 }}>
               {lang === "ca" ? "Alertes activades" : lang === "en" ? "Alerts enabled" : lang === "fr" ? "Alertes activées" : "Alertas activadas"}
             </span>
+          </div>
+        )}
+        {/* Search panel */}
+        {showSearch && (
+          <div style={{ paddingTop:10 }}>
+            <input
+              autoFocus
+              type="search"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder={lang === "ca" ? "Cerca una platja o municipi..." : lang === "en" ? "Search a beach or municipality..." : lang === "fr" ? "Rechercher une plage ou commune..." : "Busca una playa o municipio..."}
+              style={{ width:"100%", padding:"11px 14px", borderRadius:10, border:"1.5px solid #2a2a2a", background:"#1a1a1a", color:"#fff", fontSize:15, outline:"none", boxSizing:"border-box" as const }}
+            />
+            {searchQuery.trim().length > 1 && (
+              <div style={{ marginTop:8, display:"flex", flexDirection:"column", gap:6 }}>
+                {searchResults.length === 0 ? (
+                  <div style={{ padding:"12px 0", fontSize:13, color:"#555", textAlign:"center" }}>
+                    {lang === "ca" ? "Cap resultat" : lang === "en" ? "No results" : lang === "fr" ? "Aucun résultat" : "Sin resultados"}
+                  </div>
+                ) : searchResults.map(b => (
+                  <button key={b.name} onClick={() => { setSelectedBeach(b); setShowSearch(false); setSearchQuery(""); }}
+                    style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:10, border:"1.5px solid #252525", background:"#141414", cursor:"pointer", textAlign:"left" as const }}>
+                    <div style={{ width:36, height:36, borderRadius:9, background:"#071e20", border:"1.5px solid #0e3038", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🏝️</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:14, fontWeight:700, color:"#fff" }}>{b.name}</div>
+                      <div style={{ fontSize:12, color:"#555", marginTop:1 }}>{b.municipality}</div>
+                    </div>
+                    <div style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#071e20", color:"#0e9fa8", fontWeight:600 }}>
+                      {t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
