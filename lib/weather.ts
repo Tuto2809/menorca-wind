@@ -30,7 +30,12 @@ function isRainyCode(code: number, precipProb: number): boolean {
 }
 
 export async function fetchForecast(): Promise<DayForecast[]> {
-  const res = await fetch(OPEN_METEO_URL, { next: { revalidate: 3600 } });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000); // 8s timeout
+  const res = await fetch(OPEN_METEO_URL, {
+    next: { revalidate: 3600 },
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeout));
   if (!res.ok) throw new Error("Error fetching weather data");
   const json = await res.json();
 

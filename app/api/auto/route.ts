@@ -17,7 +17,7 @@ const OPEN_METEO =
   "https://api.open-meteo.com/v1/forecast" +
   "?latitude=39.97&longitude=4.07" +
   "&daily=weathercode,windspeed_10m_max,winddirection_10m_dominant,precipitation_probability_max" +
-  "&timezone=Europe%2FMadrid&forecast_days=2";
+  "&timezone=Europe%2FMadrid&forecast_days=3";
 
 const WIND_NAMES: Record<string, string> = {
   N:"Tramuntana", NE:"Gregal", E:"Llevant", SE:"Xaloc",
