@@ -114,55 +114,65 @@ export default function Home() {
   }, []);
 
   const subscribePush = async () => {
-    // iOS PWA: Notification must be called synchronously from user gesture
-    // so we request permission FIRST, then register SW
     if (!("Notification" in window)) {
       alert("Notificaciones no disponibles. Asegúrate de tener la app instalada desde Safari → Añadir a pantalla de inicio.");
       return;
     }
-
     setPushLoading(true);
     try {
-      // Step 1: request permission immediately (must be direct from user gesture)
+      // Step 1: permission (must be direct from user gesture on iOS)
       const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        if (permission === "denied") alert("Notificaciones bloqueadas. Ve a Ajustes → Playas de Menorca → Notificaciones.");
+        setPushLoading(false);
+        return;
+      }
 
-      if (permission === "granted") {
-        // Step 2: register service worker after permission granted
-        if ("serviceWorker" in navigator) {
-          try {
-            await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-          } catch (swErr) {
-            console.warn("SW registration failed:", swErr);
-          }
-        }
+      // Step 2: register service worker
+      if (!("serviceWorker" in navigator)) {
+        alert("Tu navegador no soporta notificaciones push.");
+        setPushLoading(false);
+        return;
+      }
+      const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      await navigator.serviceWorker.ready;
+
+      // Step 3: VAPID subscription
+      const VAPID_PUBLIC = "BF3Y-Pa2F_aE0MoD0G2oRt4wztdYMT4JmwMDs4ukLE9J_IRiuXwcFxwMmd14K6bKIq4ERAbTOjMCx9Ihs1BIii0";
+      const urlBase64ToUint8 = (base64: string) => {
+        const padding = "=".repeat((4 - base64.length % 4) % 4);
+        const b64 = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+        const raw = window.atob(b64);
+        return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+      };
+
+      let sub = await reg.pushManager.getSubscription();
+      if (sub) await sub.unsubscribe(); // force fresh subscription
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8(VAPID_PUBLIC),
+      });
+
+      // Step 4: save to server
+      const subJson = sub.toJSON();
+      const pushRes = await fetch("/api/push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: subJson.endpoint,
+          p256dh: subJson.keys?.p256dh ?? "",
+          auth: subJson.keys?.auth ?? "",
+        }),
+      });
+      const pushData = await pushRes.json();
+      if (pushData.ok) {
         setPushEnabled(true);
-        // Save to Supabase
-        // Simple unique ID using timestamp + random (no crypto dependency)
-        const deviceId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        try {
-          const pushRes = await fetch("/api/push", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              endpoint: `${window.location.origin}#${deviceId}`,
-              p256dh: "phase1",
-              auth: "phase1",
-            }),
-          });
-          const pushData = await pushRes.json();
-          console.log("Push register result:", pushData);
-        } catch (fetchErr) {
-          console.error("Push fetch failed:", fetchErr);
-        }
-      } else if (permission === "denied") {
-        alert("Notificaciones bloqueadas. Ve a Ajustes → Playas de Menorca → Notificaciones y actívalas.");
       } else {
-        // "default" — user dismissed without choosing
-        alert("Pulsa \"Permitir\" cuando aparezca el diálogo para recibir alertas.");
+        alert("Error guardando suscripción: " + JSON.stringify(pushData));
       }
     } catch (e) {
       console.error("Push error:", e);
-      alert("Error activando notificaciones: " + String(e));
+      alert("Error: " + String(e));
     }
     setPushLoading(false);
   };
