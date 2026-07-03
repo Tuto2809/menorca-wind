@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import webpush from "web-push";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Bini_3668";
+
+webpush.setVapidDetails(
+  "mailto:admin@menorca-wind.app",
+  process.env.VAPID_PUBLIC_KEY ?? "",
+  process.env.VAPID_PRIVATE_KEY ?? ""
+);
 
 export async function POST(req: NextRequest) {
   const pwd = req.nextUrl.searchParams.get("pwd") ?? req.headers.get("x-admin-pwd");
@@ -9,51 +16,54 @@ export async function POST(req: NextRequest) {
 
   const { messageId, title, body, icon, url } = await req.json();
 
-  // Get all active subscribers
+  // Get all active subscribers with real VAPID keys
   const { data: subs, error: subErr } = await supabase
     .from("push_subscriptions")
     .select("endpoint, p256dh, auth")
-    .eq("active", true);
+    .eq("active", true)
+    .neq("p256dh", "phase1")  // only real subscriptions
+    .neq("p256dh", "pending");
 
   if (subErr) return NextResponse.json({ error: subErr.message }, { status: 500 });
-  if (!subs || subs.length === 0) return NextResponse.json({ ok: true, sent: 0, message: "No hay suscriptores activos" });
+  if (!subs || subs.length === 0) {
+    return NextResponse.json({ ok: true, sent: 0, message: "No hay suscriptores con notificaciones reales activadas" });
+  }
 
-  // Phase 1: log the send (real VAPID sending in phase 2)
-  // For now we record the send and return success
-  // In production this would use web-push library with VAPID keys
+  const payload = JSON.stringify({ title, body, icon: icon ?? "🌊", url: url ?? "/" });
   let sent = 0;
   const errors: string[] = [];
 
   for (const sub of subs) {
     try {
-      // Phase 1: simulate send — in Phase 2 replace with web-push.sendNotification()
-      // web-push.sendNotification({ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, payload)
+      await webpush.sendNotification(
+        { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+        payload
+      );
       sent++;
-    } catch (e) {
-      errors.push(String(e));
-      // Mark subscription as inactive if endpoint is gone
-      await supabase.from("push_subscriptions").update({ active: false }).eq("endpoint", sub.endpoint);
+    } catch (e: unknown) {
+      const err = e as { statusCode?: number; message?: string };
+      console.error("Push send error:", err);
+      if (err.statusCode === 410 || err.statusCode === 404) {
+        // Subscription expired — mark inactive
+        await supabase.from("push_subscriptions").update({ active: false }).eq("endpoint", sub.endpoint);
+      }
+      errors.push(err.message ?? String(e));
     }
   }
 
-  // Update message as sent if messageId provided
+  // Update message record
   if (messageId) {
     await supabase.from("push_messages").update({
-      status: "sent",
-      sent_at: new Date().toISOString(),
-      sent_count: sent,
-      updated_at: new Date().toISOString(),
+      status: "sent", sent_at: new Date().toISOString(),
+      sent_count: sent, updated_at: new Date().toISOString(),
     }).eq("id", messageId);
-  }
-
-  // Log to push_messages if no messageId (ad-hoc send)
-  if (!messageId && title) {
+  } else if (title) {
     await supabase.from("push_messages").insert([{
       title, body, icon: icon ?? "🌊", url: url ?? "/",
-      status: "sent", sent_at: new Date().toISOString(), sent_count: sent,
-      notes: "Envío manual desde admin"
+      status: "sent", sent_at: new Date().toISOString(),
+      sent_count: sent, notes: "Envío manual desde admin",
     }]);
   }
 
-  return NextResponse.json({ ok: true, sent, errors: errors.length > 0 ? errors : undefined });
+  return NextResponse.json({ ok: true, sent, total: subs.length, errors: errors.length > 0 ? errors : undefined });
 }

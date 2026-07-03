@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import webpush from "web-push";
+
+webpush.setVapidDetails(
+  "mailto:admin@menorca-wind.app",
+  process.env.VAPID_PUBLIC_KEY ?? "",
+  process.env.VAPID_PRIVATE_KEY ?? ""
+);
 
 // This route is called by Vercel Cron every morning
 // Also callable manually from admin with ?pwd=...&force=1
@@ -110,23 +117,39 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, message: "Sin condiciones destacadas hoy", conditions: { windspeed: today.windspeed, dir: todayDir, rain: today.precipProb } });
   }
 
-  // Get subscribers
-  const { data: subs } = await supabase.from("push_subscriptions").select("endpoint").eq("active", true);
+  // Get real subscribers
+  const { data: subs } = await supabase
+    .from("push_subscriptions")
+    .select("endpoint, p256dh, auth")
+    .eq("active", true)
+    .neq("p256dh", "phase1")
+    .neq("p256dh", "pending");
+
   const subCount = subs?.length ?? 0;
 
-  // Log each message as sent
+  // Send each message to all subscribers
   for (const msg of messages) {
+    const payload = JSON.stringify({ title: msg.title, body: msg.body, icon: msg.icon, url: "/" });
+    let sent = 0;
+    for (const sub of subs ?? []) {
+      try {
+        await webpush.sendNotification(
+          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          payload
+        );
+        sent++;
+      } catch (e: unknown) {
+        const err = e as { statusCode?: number };
+        if (err.statusCode === 410 || err.statusCode === 404) {
+          await supabase.from("push_subscriptions").update({ active: false }).eq("endpoint", sub.endpoint);
+        }
+      }
+    }
     await supabase.from("push_messages").insert([{
-      title: msg.title,
-      body: msg.body,
-      icon: msg.icon,
-      url: "/",
-      status: "sent",
-      sent_at: new Date().toISOString(),
-      sent_count: subCount,
-      notes: "Envío automático",
+      title: msg.title, body: msg.body, icon: msg.icon, url: "/",
+      status: "sent", sent_at: new Date().toISOString(),
+      sent_count: sent, notes: "Envío automático",
     }]);
-    // Phase 2: real web-push sending here
   }
 
   return NextResponse.json({
