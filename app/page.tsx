@@ -143,7 +143,7 @@ export default function Home() {
           deviceId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
           localStorage.setItem("menorca_device_id", deviceId);
         }
-        await fetch("/api/push", {
+        const pushRes = await fetch("/api/push", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -151,7 +151,12 @@ export default function Home() {
             p256dh: "phase1",
             auth: "phase1",
           }),
-        }).catch(() => {});
+        });
+        if (!pushRes.ok) {
+          const errData = await pushRes.json().catch(() => ({}));
+          console.error("Push save error:", pushRes.status, errData);
+          // Still show as enabled locally even if save fails
+        }
       } else if (permission === "denied") {
         alert("Notificaciones bloqueadas. Ve a Ajustes → Playas de Menorca → Notificaciones y actívalas.");
       } else {
