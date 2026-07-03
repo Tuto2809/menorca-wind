@@ -81,7 +81,26 @@ export default function AdminPage() {
       method, headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...editMsg, status }),
     });
-    if (res.ok) { setEditMsg(null); await loadAll(pwd); }
+    if (!res.ok) return;
+    const saved = await res.json();
+
+    // If sending, also trigger real push
+    if (status === "sent") {
+      const msg = saved.message ?? { ...editMsg, id: editMsg.id };
+      if (!confirm(`¿Enviar "${msg.title}" a todos los suscriptores?`)) {
+        setEditMsg(null);
+        await loadAll(pwd);
+        return;
+      }
+      const sendRes = await fetch(`/api/push/send?pwd=${encodeURIComponent(pwd)}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageId: msg.id, title: msg.title, body: msg.body, icon: msg.icon, url: msg.url }),
+      });
+      const sendData = await sendRes.json();
+      alert(sendData.ok ? `✅ Enviado a ${sendData.sent} suscriptores` : `❌ Error: ${sendData.error}`);
+    }
+    setEditMsg(null);
+    await loadAll(pwd);
   }
 
   async function deleteMessage(id: number) {
