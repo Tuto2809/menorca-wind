@@ -71,6 +71,7 @@ export default function Home() {
   const [locationError, setLocationError] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [shareBeach, setShareBeach] = useState<string | null>(null);
+  const [selectedBeach, setSelectedBeach] = useState<typeof BEACHES[0] | null>(null);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
 
@@ -487,7 +488,7 @@ export default function Home() {
                 const beachTypeTr = t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type;
                 const beachDesc = lang === "ca" ? b.descriptionCa : lang === "en" ? b.descriptionEn : lang === "fr" ? b.descriptionFr : b.description;
                 return (
-                  <div key={b.name} style={C.beachCard}>
+                  <div key={b.name} style={{ ...C.beachCard, cursor:"pointer" }} onClick={() => setSelectedBeach(b)}>
                     <div style={{ width:24, height:24, borderRadius:"50%", background: rank===0 ? "#0e9fa8":"#1e1e1e", color: rank===0 ? "#0a0a0a":"#555", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0 }}>
                       {rank+1}
                     </div>
@@ -542,6 +543,89 @@ export default function Home() {
           </>
         )}
       </div>
+
+      {/* Beach detail modal */}
+      {selectedBeach && (() => {
+        const b = selectedBeach;
+        const beachDesc = lang === "ca" ? b.descriptionCa : lang === "en" ? b.descriptionEn : lang === "fr" ? b.descriptionFr : b.description;
+        const beachTypeTr = t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type;
+        const DEFAULT_PHOTO = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat_03.jpg/1280px-Cat_03.jpg";
+        return (
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", zIndex:50, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+            onClick={() => setSelectedBeach(null)}>
+            <div style={{ background:"#141414", borderRadius:"20px 20px 0 0", width:"100%", maxWidth:640, maxHeight:"92vh", overflow:"auto" }}
+              onClick={e => e.stopPropagation()}>
+
+              {/* Photo */}
+              <div style={{ position:"relative", width:"100%", height:240, overflow:"hidden", borderRadius:"20px 20px 0 0" }}>
+                <img
+                  src={b.photo ?? DEFAULT_PHOTO}
+                  alt={b.name}
+                  style={{ width:"100%", height:"100%", objectFit:"cover" }}
+                  onError={e => { (e.target as HTMLImageElement).src = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Menorca_beach.jpg/1280px-Menorca_beach.jpg"; }}
+                />
+                {/* Gradient overlay */}
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(20,20,20,0.9) 100%)" }} />
+                {/* Close button */}
+                <button onClick={() => setSelectedBeach(null)}
+                  style={{ position:"absolute", top:14, right:14, width:34, height:34, borderRadius:"50%", background:"rgba(0,0,0,0.5)", border:"none", color:"#fff", fontSize:18, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  ✕
+                </button>
+                {/* Beach name over photo */}
+                <div style={{ position:"absolute", bottom:16, left:16, right:16 }}>
+                  <div style={{ fontSize:24, fontWeight:800, color:"#fff", lineHeight:1.2 }}>{b.name}</div>
+                  <div style={{ fontSize:14, color:"rgba(255,255,255,0.7)", marginTop:4 }}>{b.municipality}</div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div style={{ padding:"20px 20px 40px" }}>
+                {/* Tags */}
+                <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:16 }}>
+                  <span style={{ fontSize:13, padding:"5px 12px", borderRadius:99, background:"#071e20", color:"#0e9fa8", border:"1.5px solid #0e3038", fontWeight:600 }}>
+                    🧭 {t.orientation} {b.orientation}
+                  </span>
+                  <span style={{ fontSize:13, padding:"5px 12px", borderRadius:99, background:"#0a1525", color:"#60a5fa", border:"1.5px solid #152040", fontWeight:600 }}>
+                    {beachTypeTr}
+                  </span>
+                  {b.parking && (
+                    <span style={{ fontSize:13, padding:"5px 12px", borderRadius:99, background:"#1a1a1a", color:"#777", border:"1.5px solid #2a2a2a", fontWeight:600 }}>
+                      🅿️ Parking
+                    </span>
+                  )}
+                </div>
+
+                {/* Description */}
+                <p style={{ fontSize:16, color:"#ccc", lineHeight:1.65, marginBottom:24 }}>{beachDesc}</p>
+
+                {/* Services */}
+                {b.services.length > 0 && b.services[0] !== "Sin servicios" && (
+                  <div style={{ marginBottom:24 }}>
+                    <div style={{ fontSize:12, fontWeight:700, textTransform:"uppercase", letterSpacing:".07em", color:"#555", marginBottom:10 }}>Servicios</div>
+                    <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                      {b.services.map(s => (
+                        <span key={s} style={{ fontSize:13, padding:"5px 12px", borderRadius:99, background:"#1a1a1a", color:"#888", border:"1.5px solid #2a2a2a" }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                  <button onClick={() => { window.open(`https://maps.google.com/?q=${b.lat},${b.lon}`, "_blank"); }}
+                    style={{ padding:"14px", borderRadius:14, border:"none", background:"#0e9fa8", color:"#0a0a0a", fontSize:15, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                    📍 {t.openMaps}
+                  </button>
+                  <button onClick={() => { setSelectedBeach(null); setShareBeach(b.name); }}
+                    style={{ padding:"14px", borderRadius:14, border:"1.5px solid #2a2a2a", background:"#1a1a1a", color:"#fff", fontSize:15, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                    📤 {lang === "ca" ? "Compartir" : lang === "en" ? "Share" : lang === "fr" ? "Partager" : "Compartir"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Share modal */}
       {shareBeach && day && (() => {
