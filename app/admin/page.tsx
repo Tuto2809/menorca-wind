@@ -19,6 +19,7 @@ interface PushMessage {
 interface PushConfig { [key: string]: string; }
 interface BeachReport { id: number; beach_name: string; report_type: string; message: string; status: string; created_at: string; }
 interface BeachEdit { name: string; description: string; photo: string; lat: number; lon: number; }
+interface BeachOverride { name: string; photo: string; description: string; updated_at: string; }
 
 const S = {
   bg: "#0a0a0a", card: "#141414", border: "#2a2a2a",
@@ -48,6 +49,9 @@ export default function AdminPage() {
   const [autoTestResult, setAutoTestResult] = useState<string | null>(null);
   const [reports, setReports] = useState<BeachReport[]>([]);
   const [beachEdit, setBeachEdit] = useState<BeachEdit | null>(null);
+  const [overrides, setOverrides] = useState<BeachOverride[]>([]);
+  const [editOverride, setEditOverride] = useState<{name:string;photo:string;description:string} | null>(null);
+  const [overrideSaving, setOverrideSaving] = useState(false);
 
   useEffect(() => {
     const saved = sessionStorage.getItem("admin_pwd");
@@ -67,6 +71,8 @@ export default function AdminPage() {
     setMessages(m.messages ?? []);
     setConfig(c.config ?? {});
     setReports(r.reports ?? []);
+    const ov = await fetch(`/api/beaches?pwd=${encodeURIComponent(p)}`).then(r=>r.json()).catch(()=>({beaches:[]}));
+    setOverrides(ov.beaches ?? []);
     return true;
   }
 
@@ -214,6 +220,7 @@ export default function AdminPage() {
           <button style={tabStyle("messages")} onClick={() => setTab("messages")}>📨 Mensajes</button>
           <button style={tabStyle("auto")}    onClick={() => setTab("auto")}>⚙️ Automático</button>
           <button style={tabStyle("reports")} onClick={() => setTab("reports")}>⚠️ Reportes{reports.filter(r=>r.status==="pending").length > 0 ? ` (${reports.filter(r=>r.status==="pending").length})` : ""}</button>
+          <button style={tabStyle("beaches")} onClick={() => setTab("beaches")}>🏖️ Playas</button>
         </div>
 
         <div style={{ background:S.card, border:`1.5px solid ${S.border}`, borderTop:"none", borderRadius:"0 0 14px 14px", padding:"1.2rem", marginBottom:16 }}>
@@ -371,6 +378,80 @@ export default function AdminPage() {
                   })}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* ── BEACHES TAB ── */}
+          {tab === "beaches" && (
+            <div>
+              <div style={{ fontSize:14, fontWeight:700, color:S.text, marginBottom:6 }}>🏖️ Editar fotos y descripciones</div>
+              <div style={{ fontSize:12, color:S.muted, marginBottom:14 }}>
+                Pega la URL de cualquier foto (Google Fotos, Dropbox, Imgur, etc.) para reemplazar la imagen de una playa.
+              </div>
+
+              {/* Edit form */}
+              {editOverride !== null && (
+                <div style={{ background:"#0f0f0f", border:`1.5px solid ${S.border}`, borderRadius:12, padding:"14px", marginBottom:14 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:S.text, marginBottom:12 }}>✏️ {editOverride.name}</div>
+                  <div style={{ fontSize:11, color:S.muted, marginBottom:6 }}>URL de la foto</div>
+                  <input value={editOverride.photo} onChange={e => setEditOverride(o => ({...o!, photo:e.target.value}))}
+                    placeholder="https://ejemplo.com/foto.jpg"
+                    style={{ width:"100%", padding:"8px 12px", borderRadius:8, border:`1.5px solid ${S.border}`, background:"#1a1a1a", color:S.text, fontSize:13, outline:"none", marginBottom:10, boxSizing:"border-box" as const }} />
+                  {editOverride.photo && (
+                    <img src={editOverride.photo} alt="preview"
+                      style={{ width:"100%", height:140, objectFit:"cover", borderRadius:8, marginBottom:10 }}
+                      onError={e => (e.target as HTMLImageElement).style.display="none"} />
+                  )}
+                  <div style={{ fontSize:11, color:S.muted, marginBottom:6 }}>Descripción (opcional — deja vacío para usar la predeterminada)</div>
+                  <textarea value={editOverride.description} onChange={e => setEditOverride(o => ({...o!, description:e.target.value}))}
+                    rows={2} placeholder="Descripción personalizada..."
+                    style={{ width:"100%", padding:"8px 12px", borderRadius:8, border:`1.5px solid ${S.border}`, background:"#1a1a1a", color:S.text, fontSize:13, outline:"none", resize:"none", marginBottom:12, boxSizing:"border-box" as const }} />
+                  <div style={{ display:"flex", gap:8 }}>
+                    <button onClick={async () => {
+                      setOverrideSaving(true);
+                      await fetch(`/api/beaches?pwd=${encodeURIComponent(pwd)}`, {
+                        method:"POST", headers:{"Content-Type":"application/json"},
+                        body: JSON.stringify(editOverride),
+                      });
+                      setEditOverride(null);
+                      setOverrideSaving(false);
+                      await loadAll(pwd);
+                    }} disabled={overrideSaving}
+                      style={{ flex:1, padding:"9px", borderRadius:9, border:"none", background:S.accent, color:"#0a0a0a", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                      {overrideSaving ? "..." : "💾 Guardar"}
+                    </button>
+                    <button onClick={() => setEditOverride(null)}
+                      style={{ padding:"9px 14px", borderRadius:9, border:`1.5px solid ${S.border}`, background:"transparent", color:S.muted, fontSize:13, cursor:"pointer" }}>
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Beach list — show overrides first, then all beaches */}
+              <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                {[
+                  "Arenal d'en Castell","Binigaus","Binidalí","Cala Blanca","Cala en Blanes",
+                  "Cala en Porter","Cala Galdana","Cala Macarella","Cala Macarelleta",
+                  "Cala Mesquida","Cala Morell","Cala Pregonda","Cala Tirant","Cala Turqueta",
+                  "Es Grau","Punta Prima","Sa Mesquida","Son Bou","Son Parc","Son Saura",
+                  "Santo Tomàs","Santandria","Binibèquer","Cala Llucalari","Cala Mitjana",
+                ].map(name => {
+                  const ov = overrides.find(o => o.name === name);
+                  return (
+                    <div key={name} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 12px", background:"#0f0f0f", border:`1.5px solid ${ov ? "#0e3038" : S.border}`, borderRadius:10, gap:10 }}>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <span style={{ fontSize:13, color:S.text, fontWeight:600 }}>{name}</span>
+                        {ov && <span style={{ fontSize:10, marginLeft:8, padding:"2px 6px", borderRadius:4, background:"#071e20", color:S.accent }}>Foto personalizada</span>}
+                      </div>
+                      <button onClick={() => setEditOverride({ name, photo: ov?.photo ?? "", description: ov?.description ?? "" })}
+                        style={{ padding:"5px 12px", borderRadius:7, border:`1.5px solid ${S.border}`, background:"transparent", color:S.muted, fontSize:12, cursor:"pointer", flexShrink:0 }}>
+                        ✏️ Editar
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

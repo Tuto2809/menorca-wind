@@ -73,6 +73,7 @@ export default function Home() {
   const [shareBeach, setShareBeach] = useState<string | null>(null);
   const [selectedBeach, setSelectedBeach] = useState<typeof BEACHES[0] | null>(null);
   const [reportBeach, setReportBeach] = useState<string | null>(null);
+  const [beachOverrides, setBeachOverrides] = useState<Record<string,{photo?:string;description?:string}>>({});
   const [reportType, setReportType] = useState("foto");
   const [reportMsg, setReportMsg] = useState("");
   const [reportSending, setReportSending] = useState(false);
@@ -87,6 +88,13 @@ export default function Home() {
       .then(r => r.json())
       .then(d => { setForecast(d.forecast ?? []); setLoading(false); })
       .catch(() => setLoading(false));
+    fetch("/api/beaches/public")
+      .then(r => r.json())
+      .then(d => {
+        const map: Record<string,{photo?:string;description?:string}> = {};
+        (d.beaches ?? []).forEach((b: {name:string;photo?:string;description?:string}) => { map[b.name] = b; });
+        setBeachOverrides(map);
+      }).catch(() => {});
 
   }, []);
 
@@ -623,9 +631,12 @@ export default function Home() {
       {/* Beach detail modal */}
       {selectedBeach && (() => {
         const b = selectedBeach;
-        const beachDesc = lang === "ca" ? b.descriptionCa : lang === "en" ? b.descriptionEn : lang === "fr" ? b.descriptionFr : b.description;
+        const ov = beachOverrides[b.name] ?? {};
+        const baseDesc = lang === "ca" ? b.descriptionCa : lang === "en" ? b.descriptionEn : lang === "fr" ? b.descriptionFr : b.description;
+        const beachDesc = ov.description || baseDesc;
         const beachTypeTr = t.beachTypes[b.type as keyof typeof t.beachTypes] ?? b.type;
-        const DEFAULT_PHOTO = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat_03.jpg/1280px-Cat_03.jpg";
+        const DEFAULT_PHOTO = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80";
+        const beachPhoto = ov.photo || b.photo || DEFAULT_PHOTO;
         return (
           <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", zIndex:50, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
             onClick={() => setSelectedBeach(null)}>
@@ -635,7 +646,7 @@ export default function Home() {
               {/* Photo */}
               <div style={{ position:"relative", width:"100%", height:240, overflow:"hidden", borderRadius:"20px 20px 0 0" }}>
                 <img
-                  src={b.photo ?? DEFAULT_PHOTO}
+                  src={beachPhoto}
                   alt={b.name}
                   style={{ width:"100%", height:"100%", objectFit:"cover" }}
                   onError={e => { (e.target as HTMLImageElement).src = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Menorca_beach.jpg/1280px-Menorca_beach.jpg"; }}
