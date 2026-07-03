@@ -854,4 +854,16 @@ export const BEACHES: Beach[] = [
     parking: false, services: [],
     lat: 39.93230496760924, lon: 3.989332644272806,
   },
+  {
+    name: "Cala Biniancolla",
+    photo: "/api/photo?id=1OOmwwqhthi6lBsyJneZOB6K8KsEQBitv",
+    orientation: "SW", municipality: "Sant Lluís",
+    length: "200 m", lengthM: 200, type: "Familiar",
+    description: "Pequeña cala tranquila en el sur de Menorca, de aguas calmadas y entorno natural bien conservado. Ideal para familias que buscan tranquilidad.",
+    descriptionCa: "Petita cala tranquil·la al sud de Menorca, d'aigües calmades i entorn natural ben conservat. Ideal per a famílies que busquen tranquil·litat.",
+    descriptionEn: "Small quiet cove in the south of Menorca, with calm waters and a well-preserved natural setting. Ideal for families seeking peace.",
+    descriptionFr: "Petite crique tranquille au sud de Minorque, aux eaux calmes et au cadre naturel bien préservé. Idéale pour les familles en quête de tranquillité.",
+    parking: false, services: [],
+    lat: 39.81245412491599, lon: 4.264148576690158,
+  },
 ];
