@@ -57,7 +57,7 @@ export function distanceKm(lat1: number, lon1: number, lat2: number, lon2: numbe
 export const BEACHES: Beach[] = [
   {
     name: "Arenal d'en Castell",
-    photo: "/api/photo?id=1pMhEJeIX5xLnHBmW9MdZLifjny193bqz",
+    photo: "/api/photo?id=15HBd1Z1eQHl4knFOVcMO-Whel9cV7K63",
     orientation: "N", municipality: "Es Mercadal",
     length: "500 m", lengthM: 500, type: "Familiar",
     description: "Bahía en herradura perfectamente cerrada, muy segura para niños. Aguas calmadas y poco profundas con todos los servicios.",
@@ -69,7 +69,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Banyuls",
-    photo: "/api/photo?id=1S_huGbe7Qh9H6WhwhUgyYmVPn9tULTzh",
+    photo: "/api/photo?id=14cWFc56bL38HkrGoNEHhDM_HaHTMFGfl",
     orientation: "SE", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -81,7 +81,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Binibeca Nou",
-    photo: "/api/photo?id=1fVGUZ8tNjifofBfJRUhZLBEtChxaQNxg",
+    photo: "/api/photo?id=1yg6z5dtUWUcG6gx_yGcmD-a6vbg1VT2T",
     orientation: "E", municipality: "Sant Lluís",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -93,7 +93,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Binigaus",
-    photo: "/api/photo?id=1nRicWqElHEsy0ExQRcN2Gv515yTSye6f",
+    photo: "/api/photo?id=1o9S3nkPfQfs7lM-HNdgrTxlmB7gNlWPS",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "700 m", lengthM: 700, type: "Nudista",
     description: "Playa nudista larga y salvaje, solo accesible a pie (20 min). Sin servicios pero con una soledad y naturaleza difícil de superar.",
@@ -105,7 +105,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Binimel·La",
-    photo: "/api/photo?id=1We5t22I9qdz19frj9rtbQiyPSJh4J8C5",
+    photo: "/api/photo?id=1SxjYHzSySJZNKti3cOU_YEAOKyb-XpvV",
     orientation: "NE", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -117,7 +117,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Binisafuller",
-    photo: "/api/photo?id=1YFgJ_ZpdQEL6XZ9jny7fQKYo-1ihoYbr",
+    photo: "/api/photo?id=10wKsmhpNOtwX1Soj6VDBAnALJSh9QBH3",
     orientation: "SE", municipality: "Sant Lluís",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -129,6 +129,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Alcaufar",
+    photo: "/api/photo?id=1Jnl6D9wY46HVbcGXpYsoi1cnNXxQ8uHb",
     orientation: "SE", municipality: "Sant Lluís",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -140,7 +141,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Barril",
-    photo: "/api/photo?id=1DixFTCa-05hRNmPnDU58O0Z8fCeQAJHz",
+    photo: "/api/photo?id=1ADwjDCY3VVa_kTx9jCgyKB9xpXopH_og",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -152,6 +153,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Binidali",
+    photo: "/api/photo?id=11ZE4MPW-_RcnIGWai9-4_zfTvegLY_kt",
     orientation: "SE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -163,7 +165,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Blanca",
-    photo: "/api/photo?id=1YGrHjTnNveUG_G6iwxWCwm4TYWCFyXIs",
+    photo: "/api/photo?id=1s7SC2_Gw-aAYK5FGfNUj77pSaAX3afuo",
     orientation: "SW", municipality: "Ciutadella",
     length: "300 m", lengthM: 300, type: "Familiar",
     description: "Arena blanca y aguas de color azul intenso cerca de Ciutadella. Atardeceres espectaculares. Muy popular entre locales.",
@@ -175,6 +177,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Blanes",
+    photo: "/api/photo?id=1s-aIJaxwwwK2cgNgZ4dUJQw7oy9ixclu",
     orientation: "S", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Urbana",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -186,7 +189,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Bosch",
-    photo: "/api/photo?id=1sqhOwtLkWbU9ntxtD8lzLIZmqVsfTfeu",
+    photo: "/api/photo?id=1_crUwfSfU6O6VGEoPsD6kEjhE9hMEPhH",
     orientation: "E", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Familiar",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -198,7 +201,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Brut",
-    photo: "/api/photo?id=1ZbqkIvfg_qICwkK_vXtzpaUmZCe5XG0M",
+    photo: "/api/photo?id=1A6a-VDqZ2unFSpnoXOX8juVEvW8G6fdx",
     orientation: "SE", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -210,7 +213,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Carbó",
-    photo: "/api/photo?id=1vjGe7mRBWouU2hZ41nYA8EoDoJ2GdkCn",
+    photo: "/api/photo?id=1nUNN0LNzfK2VTheda8Rg-JrVpvmqgdNX",
     orientation: "N", municipality: "Es Mercadal",
     length: "150 m", lengthM: 150, type: "Tranquila",
     description: "Mini cala de aguas extraordinariamente calmadas, ideal para snorkel. Muy recogida entre acantilados, poca gente incluso en verano.",
@@ -222,7 +225,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Degolladors",
-    photo: "/api/photo?id=196Xob-O-P-KnfWBHeKToDhzR21XIon7r",
+    photo: "/api/photo?id=1BjOcwRfsRk9Me542g_ktEpwlDO1Z1DOW",
     orientation: "SW", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -234,7 +237,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala En Calderer",
-    photo: "/api/photo?id=1ovu3_bfjFzDga41tD45as9SljawH-H5b",
+    photo: "/api/photo?id=1LjKgtQ51EAcNkdI1jiqKVaJht_avefXu",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -246,7 +249,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala En Cavaller",
-    photo: "/api/photo?id=1P6qtyjOonF2Ay6fzxShw9P_5_f9Rim4-",
+    photo: "/api/photo?id=1Cys4FmDg70XGzKy06kkHKjsWIYGP8z67",
     orientation: "NE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -258,7 +261,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Escorxada",
-    photo: "/api/photo?id=1sdXYBpdJnV4WN7DggeEqwSlWttB59F5t",
+    photo: "/api/photo?id=15pZDXijCZhrRM0J2oxbj9_ww-9fS4nU9",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "200 m", lengthM: 200, type: "Virgen",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -270,7 +273,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Forcat",
-    photo: "/api/photo?id=1Bs8M0zzNz_I9hgZCy_uq5ODUaTDtmFcW",
+    photo: "/api/photo?id=1eDDjSsmDYAPerNdZNPOq9D2mVL1rYD3b",
     orientation: "SE", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -282,7 +285,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Fustam",
-    photo: "/api/photo?id=1Qn6aITrVIMm952366ZyR_00WbYwLsCQ9",
+    photo: "/api/photo?id=10h7wXGkXqOc19XX5R47eN_PIaArwlYZg",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "200 m", lengthM: 200, type: "Virgen",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -294,7 +297,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Galdana",
-    photo: "/api/photo?id=1aGUYIdG6ld3o66tl1LhatK55ttOaTNJA",
+    photo: "/api/photo?id=1hQYtqvzZ12tDYRPa4nHYp4GPfbTZYLLc",
     orientation: "SW", municipality: "Ferreries",
     length: "400 m", lengthM: 400, type: "Familiar",
     description: "La 'reina de las calas'. Bahía semicircular perfecta rodeada de acantilados y pinos. Aguas muy calmadas, ideal para familias con niños.",
@@ -306,7 +309,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Llucalari",
-    photo: "/api/photo?id=1g9_UhlTHqjOsIcABA7XFCpr-ihk5hP_F",
+    photo: "/api/photo?id=1ufTkysGYsJBivE7y--3rLrOTOeuNJlSW",
     orientation: "N", municipality: "Alaior",
     length: "200 m", lengthM: 200, type: "Virgen",
     description: "Cala virgen accesible por el Camí de Cavalls. Aguas cristalinas y entorno natural protegido. Sin servicios, perfecta para escapar.",
@@ -318,7 +321,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Macarella",
-    photo: "/api/photo?id=1CgK63nVTDp8Lvskw7xIa_2fBqSOK33YS",
+    photo: "/api/photo?id=1MNdQw1FMTXJPaTJklf6b69bL_Mn0SryU",
     orientation: "S", municipality: "Ferreries",
     length: "500 m", lengthM: 500, type: "Virgen",
     description: "Una de las calas más espectaculares de Menorca. Acantilados blancos, pinos centenarios y agua de color esmeralda que quita el aliento.",
@@ -330,7 +333,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Macarelleta",
-    photo: "/api/photo?id=1q25Wevj3voLOlMwjpYly5Al8s6V6yZR9",
+    photo: "/api/photo?id=1o-L3saZbIvStWnki_-7GlnheExOf2001",
     orientation: "SW", municipality: "Ferreries",
     length: "200 m", lengthM: 200, type: "Nudista",
     description: "Pequeña cala nudista gemela de Macarella, a 10 minutos a pie. Muy recogida y tranquila con el mismo agua espectacular.",
@@ -342,7 +345,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Mesquida",
-    photo: "/api/photo?id=1gs84Rt42rqPWIO0ha5jmf7nG2VNGBSfu",
+    photo: "/api/photo?id=18dqW-1Tq0-GxjYyOOzuqSXAATFXlQZiP",
     orientation: "E", municipality: "Maó",
     length: "400 m", lengthM: 400, type: "Surf",
     description: "Playa abierta con oleaje frecuente, favorita de surfistas. Arena dorada, dunas y entorno natural bien conservado cerca de Maó.",
@@ -354,7 +357,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Mica",
-    photo: "/api/photo?id=12cXSY-EWfQ003JQTsb8zqurGvKFQAr4R",
+    photo: "/api/photo?id=1nE2jdsm6OTfh1txqIL8jWSSPczoxEfA3",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -366,7 +369,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Mitjana",
-    photo: "/api/photo?id=1CCXhL47Wh5_BGeuMRhSwWzCGLdW0stS4",
+    photo: "/api/photo?id=1VzzH5mB_j0FuesxGREy8rzKs3Z14lkpc",
     orientation: "S", municipality: "Ferreries",
     length: "350 m", lengthM: 350, type: "Virgen",
     description: "Cala virgen preciosa accesible a pie desde Cala Galdana (20 min). Aguas turquesas y poca gente comparado con su vecina.",
@@ -378,7 +381,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Morell",
-    photo: "/api/photo?id=1veIBCacv7HJggOu1Rj5AAsQnds17d9iv",
+    photo: "/api/photo?id=1jQpOcqygqGa_frqtJ6PaUyL_KtwyiWFd",
     orientation: "N", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Cala escondida de roca calcárea blanca con agua turquesa. Ambiente muy tranquilo y local. Junto a un yacimiento prehistórico.",
@@ -390,7 +393,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Morella Nou",
-    photo: "/api/photo?id=149rwrKXvi2uvvlSQKLVDuSYIYgiRz-nY",
+    photo: "/api/photo?id=1fVmc_GLo6EnahwgRmUtzkyTmQZziDwSv",
     orientation: "NE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -402,7 +405,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Pedrera",
-    photo: "/api/photo?id=1HQR0IG-OKLDgrZs1K7VjRkZxmUyRQGPr",
+    photo: "/api/photo?id=1alWwQBzAU4LdZm1yH0jwDP3PS4b4CSJz",
     orientation: "N", municipality: "Es Castell",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -414,7 +417,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Pilar",
-    photo: "/api/photo?id=1j3dO-rwW4nZ5gq7ZK7Pw8-Pnxd1rKCuB",
+    photo: "/api/photo?id=1su46oAasDysvXFgkSyrUB11YjZdhFKRU",
     orientation: "N", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Nudista",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -426,6 +429,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Pregonda",
+    photo: "/api/photo?id=1qQyb58kJnXbLk5GarQ-Wm_TpPVr98gia",
     orientation: "N", municipality: "Es Mercadal",
     length: "500 m", lengthM: 500, type: "Virgen",
     description: "Joya escondida con arena de color rojizo única en Menorca. Rodeada de islotes y dunas. Solo accesible a pie (40 min) o en barco.",
@@ -437,6 +441,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Pudent",
+    photo: "/api/photo?id=1gHu1WxhsctcpHIurHwo4mpThpmsxxD_F",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -448,6 +453,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Tirant",
+    photo: "/api/photo?id=1cXPk1PQQHBmARpt3z8M9qfutbCWcJN5j",
     orientation: "N", municipality: "Es Mercadal",
     length: "600 m", lengthM: 600, type: "Kitesurf",
     description: "Playa favorita de kitesurfistas y windsurfistas gracias a sus vientos constantes. Arena clara y aguas poco profundas.",
@@ -459,6 +465,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Turqueta",
+    photo: "/api/photo?id=1ovVcYkbLjtbrVctLkk7Qo7QZGnFy4t_9",
     orientation: "SE", municipality: "Ciutadella",
     length: "300 m", lengthM: 300, type: "Virgen",
     description: "Cala virgen de aguas extraordinariamente transparentes en tonos azul y verde. Rodeada de pinos con arena blanca y fina.",
@@ -470,6 +477,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Viola de Llevant",
+    photo: "/api/photo?id=1dUm9RbApQPFYuHqiJfvev2BUqgjbbNHr",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -481,6 +489,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Viola de Ponent",
+    photo: "/api/photo?id=10P4q2cJS0q3MOSCq7LnGnUUaDfoJnemH",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -492,6 +501,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala de Sa Torreta",
+    photo: "/api/photo?id=1NKMxjYRqjBONwNHga_t2yChPDoPNh3AC",
     orientation: "NE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -503,6 +513,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala de Sant Llorenç",
+    photo: "/api/photo?id=1NzIVTXd3fhofkx7kqBGKWiyHfNxUufTs",
     orientation: "S", municipality: "Alaior",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -514,7 +525,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala en Blanes",
-    photo: "/api/photo?id=1trbPj8tzzetpFLFH9h5ZNOd6Jeh-tIy0",
+    photo: "/api/photo?id=1jh09tAgR8h_b8aYIkD3CS98K_GT_Yskf",
     orientation: "S", municipality: "Ciutadella",
     length: "400 m", lengthM: 400, type: "Urbana",
     description: "Cala urbana bien equipada con todos los servicios a pie de playa. Muy práctica con paseo marítimo y restaurantes cerca.",
@@ -526,6 +537,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala en Porter",
+    photo: "/api/photo?id=1wk3uDztgIFSDsQcLAvhYg14Rdxdzldig",
     orientation: "S", municipality: "Alaior",
     length: "350 m", lengthM: 350, type: "Familiar",
     description: "Espectacular cala entre acantilados de 40 metros de altura. Arena fina y aguas de colores increíbles. Urbanización encima con vistas únicas.",
@@ -537,6 +549,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cales Coves",
+    photo: "/api/photo?id=1gOfGL9-h1njZ-Fn3U_O3axa_GZ2yTAEp",
     orientation: "N", municipality: "Alaior",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -548,6 +561,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cales Piques",
+    photo: "/api/photo?id=1OPNA4yh-RAALgMs_PCe_aTs7YqzCDiDs",
     orientation: "SW", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -559,6 +573,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Calo Blanc",
+    photo: "/api/photo?id=1nCQC0BQnRI11yS7SPEZB5w0IJEZHc5vr",
     orientation: "NE", municipality: "Sant Lluís",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -570,6 +585,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cavalleria",
+    photo: "/api/photo?id=1CwwQHdZTLvHXDexYbZWudKZEBAcX2O7j",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -581,6 +597,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "D'En Gorries",
+    photo: "/api/photo?id=1nzJYolF-kB7HEcK-f8QC7ErwS_FiAWVd",
     orientation: "SW", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -592,6 +609,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "D'En Tortuga",
+    photo: "/api/photo?id=1viF0qdoukmBQFkojW6-4lZOHP5dqqwDD",
     orientation: "NE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -603,6 +621,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "D'Es Tamarells",
+    photo: "/api/photo?id=1vNmf5Hrs8gXU1Tuz9L_0eQOU_JbI6Ysn",
     orientation: "NE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -614,6 +633,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "De Ferragut",
+    photo: "/api/photo?id=1VlE7LLai9ldeWdR4F90QZTUcF09i0coh",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -625,6 +645,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "De Fornells",
+    photo: "/api/photo?id=1qGBK4m4ZvzbpD81b_E67bN6dGpGTYauS",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -636,6 +657,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Des Bot",
+    photo: "/api/photo?id=18Dqo6enfD5aAS7MW7QkaObpzf-urON4b",
     orientation: "SE", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -647,6 +669,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Es Canutells",
+    photo: "/api/photo?id=1VZb56kGBaF5iUD5qaazCiY0bjyXWhxrC",
     orientation: "SE", municipality: "Maó",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -658,6 +681,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Es Grau",
+    photo: "/api/photo?id=19lLSpWLWCbP_pzxWQB3XHjzU--1TRQZ7",
     orientation: "NE", municipality: "Maó",
     length: "600 m", lengthM: 600, type: "Familiar",
     description: "Playa dentro del Parc Natural de s'Albufera. Aguas muy poco profundas y calmadas, perfectas para niños. Entorno natural protegido único.",
@@ -669,6 +693,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Es Macar D'En Tosqueta",
+    photo: "/api/photo?id=1qwTinF0W4_r3g_3MEdSJhs0-ne0pjm-F",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -680,6 +705,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Es Tancats",
+    photo: "/api/photo?id=1JriGc5wLyDBuI4bp6qxiFNhh3XWdf2Mg",
     orientation: "N", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -691,6 +717,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Ets Alocs",
+    photo: "/api/photo?id=15paQvOhuhBMzEiV57ZMd_RKu9UlttYv4",
     orientation: "NW", municipality: "Ferreries",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -702,6 +729,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Na Macaret",
+    photo: "/api/photo?id=1iCnVjjV1-VzkySiYgoR5-McpLggunbaO",
     orientation: "N", municipality: "Es Mercadal",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -713,6 +741,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Punta Prima",
+    photo: "/api/photo?id=10WK0L3tp7Q1HtECXcGPt8ShsJCkvCTRy",
     orientation: "E", municipality: "Sant Lluís",
     length: "300 m", lengthM: 300, type: "Familiar",
     description: "Playa con vistas privilegiadas al islote de l'Aire y su faro. Aguas cristalinas y arena fina. Bien equipada y fácil de acceder.",
@@ -724,6 +753,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Rinco Fondu",
+    photo: "/api/photo?id=1eyMOFwl0YlsPDFLEm-Fvgpt46UyVisi8",
     orientation: "S", municipality: "Sant Lluís",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -735,6 +765,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Sa Farola",
+    photo: "/api/photo?id=1E76V4S4A0uS3OrRlGo6GbJHtnWPdlQZp",
     orientation: "SW", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -746,6 +777,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Sant Adeodato",
+    photo: "/api/photo?id=1ARVZBa8TruMyKmqWeJcDymCxsse9Xaw3",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -757,6 +789,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Sant Tomas",
+    photo: "/api/photo?id=1BMFq28tTQflaIfelNgbhWq7gpkJDoqVo",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "1.2 km", lengthM: 1200, type: "Familiar",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -768,6 +801,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Santandria",
+    photo: "/api/photo?id=1fZm-BgiuSrPcKQV2OTFs3iQgD-GIQvje",
     orientation: "W", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Familiar",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -779,6 +813,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Son Bou",
+    photo: "/api/photo?id=1fO0vp84dze_SMJLdCVlLOjaXaBOeJZI2",
     orientation: "SE", municipality: "Alaior",
     length: "2.5 km", lengthM: 2500, type: "Familiar",
     description: "La playa más larga de Menorca con 2.5 km. Arena fina, aguas poco profundas y todos los servicios. Perfecta para familias.",
@@ -790,6 +825,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Son Parc",
+    photo: "/api/photo?id=1IPEHS2QhgXigHRX2Le3u7qQFgxlejwOA",
     orientation: "N", municipality: "Es Mercadal",
     length: "600 m", lengthM: 600, type: "Familiar",
     description: "Amplia playa en bahía natural con aguas calmadas. Rodeada de pinos y con dunas. Muy tranquila, ideal para familias que buscan espacio.",
@@ -801,6 +837,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Son Saura",
+    photo: "/api/photo?id=1jZ0gNObnen870syPzZ6dbzKS1NgGnEdC",
     orientation: "S", municipality: "Ciutadella",
     length: "800 m", lengthM: 800, type: "Virgen",
     description: "Doble cala virgen rodeada de pinos. Aguas cristalinas de color turquesa intenso. Acceso por pista de tierra, de gran belleza.",
@@ -812,6 +849,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Son Xoriguer",
+    photo: "/api/photo?id=1qfnZB6KiW7TkKp_dLXzn0vr2GIDEx5my",
     orientation: "SE", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Familiar",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -823,6 +861,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Talaier",
+    photo: "/api/photo?id=14BC7p9pQ9CTK68-PxHgcfOuM9SUxs1EV",
     orientation: "SE", municipality: "Ciutadella",
     length: "200 m", lengthM: 200, type: "Virgen",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -834,6 +873,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Talis",
+    photo: "/api/photo?id=1nKEaVlpWHdgGl8T-6K879jVJXB0U49Rt",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "200 m", lengthM: 200, type: "Tranquila",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -845,6 +885,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Trebaluger",
+    photo: "/api/photo?id=1dZOQShiTN2cXY0i_-2qxmPfyQFF1IZw-",
     orientation: "SE", municipality: "Es Migjorn Gran",
     length: "200 m", lengthM: 200, type: "Virgen",
     description: "Playa o cala con aguas limpias y entorno natural característico de Menorca.",
@@ -856,7 +897,7 @@ export const BEACHES: Beach[] = [
   },
   {
     name: "Cala Biniancolla",
-    photo: "/api/photo?id=1OOmwwqhthi6lBsyJneZOB6K8KsEQBitv",
+    photo: "/api/photo?id=1dseiA3Tu5O_wCRDgQCFqWJ4Hjj69_WPu",
     orientation: "SW", municipality: "Sant Lluís",
     length: "200 m", lengthM: 200, type: "Familiar",
     description: "Pequeña cala tranquila en el sur de Menorca, de aguas calmadas y entorno natural bien conservado. Ideal para familias que buscan tranquilidad.",

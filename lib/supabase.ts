@@ -24,9 +24,11 @@ export async function registrarConsulta(data: Omit<ConsultaRecord, "id" | "creat
 }
 
 export async function getStats() {
+  // Use Madrid timezone for day boundaries
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
-  const weekAgo = new Date(now);
+  const madridNow = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Madrid" }));
+  const todayStr = madridNow.toISOString().slice(0, 10);
+  const weekAgo = new Date(madridNow);
   weekAgo.setDate(now.getDate() - 7);
   const weekStr = weekAgo.toISOString().slice(0, 10);
 

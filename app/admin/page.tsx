@@ -155,30 +155,49 @@ export default function AdminPage() {
     await loadAll(pwd);
   }
 
-  // Login screen
-  if (!authed) return (
-    <main style={{ minHeight:"100vh", background:S.bg, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
-      <div style={{ background:S.card, border:`1.5px solid ${S.border}`, borderRadius:16, padding:"2rem", width:"100%", maxWidth:340 }}>
-        <div style={{ textAlign:"center", marginBottom:24 }}>
-          <div style={{ fontSize:36 }}>🌊</div>
-          <div style={{ fontWeight:600, fontSize:18, color:S.text, marginTop:8 }}>Panel admin</div>
-          <div style={{ fontSize:13, color:S.muted, marginTop:4 }}>Playas de Menorca</div>
-        </div>
-        <form onSubmit={handleLogin}>
-          <input type="password" placeholder="Contraseña" value={pwd} onChange={e => setPwd(e.target.value)}
-            style={{ width:"100%", padding:"10px 14px", borderRadius:10, border:`1.5px solid ${S.border}`, background:"#1a1a1a", color:S.text, fontSize:15, marginBottom:10, outline:"none" }} />
-          {error && <div style={{ color:"#f87171", fontSize:13, marginBottom:8 }}>{error}</div>}
-          <button type="submit" disabled={loading}
-            style={{ width:"100%", background:S.accent, color:"#0a0a0a", border:"none", borderRadius:10, padding:"10px", fontSize:15, fontWeight:600, cursor:"pointer" }}>
+  // PIN Login screen
+  if (!authed) {
+    const handlePin = (digit: string) => { if (pwd.length < 6) setPwd(p => p + digit); };
+    const handleDel = () => setPwd(p => p.slice(0, -1));
+    const handleSubmit = () => { if (pwd.length > 0) handleLogin({ preventDefault: () => {} } as React.FormEvent); };
+    return (
+      <main style={{ minHeight:"100vh", background:S.bg, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+        <div style={{ background:S.card, border:`1.5px solid ${S.border}`, borderRadius:20, padding:"2rem 1.5rem", width:"100%", maxWidth:300 }}>
+          <div style={{ textAlign:"center", marginBottom:24 }}>
+            <div style={{ width:56, height:56, borderRadius:16, background:S.accent, display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, margin:"0 auto 12px" }}>🌊</div>
+            <div style={{ fontWeight:700, fontSize:18, color:S.text }}>Panel admin</div>
+            <div style={{ fontSize:13, color:S.muted, marginTop:4 }}>Playas de Menorca</div>
+          </div>
+          <div style={{ display:"flex", justifyContent:"center", gap:12, marginBottom:24 }}>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} style={{ width:14, height:14, borderRadius:"50%", background: i < pwd.length ? S.accent : "#2a2a2a" }} />
+            ))}
+          </div>
+          {error && <div style={{ color:"#f87171", fontSize:13, textAlign:"center", marginBottom:12 }}>{error}</div>}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:12 }}>
+            {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k, idx) => (
+              <button key={idx} onClick={() => k === "⌫" ? handleDel() : k !== "" ? handlePin(k) : undefined}
+                style={{ padding:"16px 0", borderRadius:12, fontSize: k === "⌫" ? 20 : 22, fontWeight:600,
+                  border:`1.5px solid ${k === "" ? "transparent" : S.border}`,
+                  background: k === "" ? "transparent" : "#1a1a1a",
+                  color: k === "⌫" ? "#f87171" : S.text,
+                  cursor: k === "" ? "default" : "pointer" }}>
+                {k}
+              </button>
+            ))}
+          </div>
+          <button onClick={handleSubmit} disabled={loading || pwd.length === 0}
+            style={{ width:"100%", background: pwd.length > 0 ? S.accent : "#2a2a2a", color: pwd.length > 0 ? "#0a0a0a" : S.muted,
+              border:"none", borderRadius:12, padding:"14px", fontSize:16, fontWeight:700, cursor: pwd.length > 0 ? "pointer" : "default" }}>
             {loading ? "..." : "Entrar"}
           </button>
-        </form>
-        <div style={{ marginTop:16, textAlign:"center" }}>
-          <a href="/" style={{ fontSize:13, color:S.muted }}>← Volver a la app</a>
+          <div style={{ marginTop:16, textAlign:"center" }}>
+            <a href="/" style={{ fontSize:13, color:S.muted }}>← Volver a la app</a>
+          </div>
         </div>
-      </div>
-    </main>
-  );
+      </main>
+    );
+  }
 
   // Compute bar chart data
   const totalByDay: Record<string, number> = {};
@@ -187,11 +206,11 @@ export default function AdminPage() {
   const maxVal = Math.max(...dayEntries.map(([,v])=>v), 1);
 
   const tabStyle = (t: Tab): React.CSSProperties => ({
-    padding:"10px 18px", borderRadius:"10px 10px 0 0", border:`1.5px solid ${S.border}`,
+    padding:"8px 10px", borderRadius:"10px 10px 0 0", whiteSpace:"nowrap" as const, flexShrink:0, border:`1.5px solid ${S.border}`,
     borderBottom: tab === t ? "none" : `1.5px solid ${S.border}`,
     background: tab === t ? S.card : "transparent",
     color: tab === t ? S.text : S.muted,
-    fontSize:13, fontWeight:600, cursor:"pointer",
+    fontSize:11, fontWeight:600, cursor:"pointer",
   });
 
   return (
@@ -213,9 +232,9 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div style={{ maxWidth:700, margin:"0 auto", padding:"20px 14px" }}>
+      <div style={{ maxWidth:700, margin:"0 auto", padding:"10px 8px" }}>
         {/* Tabs */}
-        <div style={{ display:"flex", gap:4, marginBottom:0, borderBottom:`1.5px solid ${S.border}` }}>
+        <div style={{ display:"flex", gap:4, marginBottom:0, borderBottom:`1.5px solid ${S.border}`, overflowX:"auto", scrollbarWidth:"none" as const }}>
           <button style={tabStyle("stats")}   onClick={() => setTab("stats")}>📊 Estadísticas</button>
           <button style={tabStyle("messages")} onClick={() => setTab("messages")}>📨 Mensajes</button>
           <button style={tabStyle("auto")}    onClick={() => setTab("auto")}>⚙️ Automático</button>
