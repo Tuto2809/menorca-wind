@@ -76,10 +76,11 @@ export default function AdminPage() {
     return true;
   }
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent, overridePwd?: string) {
     e.preventDefault(); setLoading(true); setError("");
-    const ok = await loadAll(pwd);
-    if (ok) { setAuthed(true); sessionStorage.setItem("admin_pwd", pwd); }
+    const usePwd = overridePwd ?? pwd;
+    const ok = await loadAll(usePwd);
+    if (ok) { setAuthed(true); sessionStorage.setItem("admin_pwd", usePwd); }
     else setError("Contraseña incorrecta");
     setLoading(false);
   }
@@ -157,18 +158,24 @@ export default function AdminPage() {
 
   // PIN Login screen
   if (!authed) {
+    const pinRef = { current: pwd };
     const handlePin = (digit: string) => {
-      if (pwd.length < 6) {
-        const newPwd = pwd + digit;
+      const cur = pinRef.current;
+      if (cur.length < 6) {
+        const newPwd = cur + digit;
+        pinRef.current = newPwd;
         setPwd(newPwd);
-        // Auto-submit when 6 digits entered
         if (newPwd.length === 6) {
-          setTimeout(() => handleLogin({ preventDefault: () => {} } as React.FormEvent), 100);
+          setTimeout(() => handleLogin({ preventDefault: () => {} } as React.FormEvent, newPwd), 30);
         }
       }
     };
-    const handleDel = () => setPwd(p => p.slice(0, -1));
-    const handleSubmit = () => { if (pwd.length > 0) handleLogin({ preventDefault: () => {} } as React.FormEvent); };
+    const handleDel = () => {
+      const newPwd = pinRef.current.slice(0, -1);
+      pinRef.current = newPwd;
+      setPwd(newPwd);
+    };
+    const handleSubmit = () => { if (pwd.length > 0) handleLogin({ preventDefault: () => {} } as React.FormEvent, pwd); };
     return (
       <main style={{ minHeight:"100vh", background:S.bg, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
         <div style={{ background:S.card, border:`1.5px solid ${S.border}`, borderRadius:20, padding:"2rem 1.5rem", width:"100%", maxWidth:300 }}>
@@ -190,7 +197,9 @@ export default function AdminPage() {
                   border:`1.5px solid ${k === "" ? "transparent" : S.border}`,
                   background: k === "" ? "transparent" : "#1a1a1a",
                   color: k === "⌫" ? "#f87171" : S.text,
-                  cursor: k === "" ? "default" : "pointer" }}>
+                  cursor: k === "" ? "default" : "pointer",
+                  touchAction:"manipulation", WebkitTapHighlightColor:"transparent",
+                  transition:"background 0.05s" }}>
                 {k}
               </button>
             ))}
