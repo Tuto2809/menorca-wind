@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Bini_3668";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "280900";
 
 function auth(req: NextRequest) {
   return req.nextUrl.searchParams.get("pwd") === ADMIN_PASSWORD;

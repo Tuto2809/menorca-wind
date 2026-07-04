@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import webpush from "web-push";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Bini_3668";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "280900";
 
 webpush.setVapidDetails(
   "mailto:admin@menorca-wind.app",

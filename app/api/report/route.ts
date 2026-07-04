@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 // GET — list reports (admin only)
 export async function GET(req: NextRequest) {
   const pwd = req.nextUrl.searchParams.get("pwd");
-  if (pwd !== (process.env.ADMIN_PASSWORD ?? "Bini_3668")) {
+  if (pwd !== (process.env.ADMIN_PASSWORD ?? "280900")) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
   const { data, error } = await supabase
@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
 // PATCH — mark report as resolved
 export async function PATCH(req: NextRequest) {
   const pwd = req.nextUrl.searchParams.get("pwd");
-  if (pwd !== (process.env.ADMIN_PASSWORD ?? "Bini_3668")) {
+  if (pwd !== (process.env.ADMIN_PASSWORD ?? "280900")) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
   const { id, status } = await req.json();

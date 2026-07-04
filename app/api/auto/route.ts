@@ -11,7 +11,7 @@ webpush.setVapidDetails(
 // This route is called by Vercel Cron every morning
 // Also callable manually from admin with ?pwd=...&force=1
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Bini_3668";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "280900";
 
 const OPEN_METEO =
   "https://api.open-meteo.com/v1/forecast" +

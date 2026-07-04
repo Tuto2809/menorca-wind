@@ -157,7 +157,16 @@ export default function AdminPage() {
 
   // PIN Login screen
   if (!authed) {
-    const handlePin = (digit: string) => { if (pwd.length < 6) setPwd(p => p + digit); };
+    const handlePin = (digit: string) => {
+      if (pwd.length < 6) {
+        const newPwd = pwd + digit;
+        setPwd(newPwd);
+        // Auto-submit when 6 digits entered
+        if (newPwd.length === 6) {
+          setTimeout(() => handleLogin({ preventDefault: () => {} } as React.FormEvent), 100);
+        }
+      }
+    };
     const handleDel = () => setPwd(p => p.slice(0, -1));
     const handleSubmit = () => { if (pwd.length > 0) handleLogin({ preventDefault: () => {} } as React.FormEvent); };
     return (
