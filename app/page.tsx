@@ -743,6 +743,60 @@ export default function Home() {
                 {/* Description */}
                 <p style={{ fontSize:16, color:"#ccc", lineHeight:1.65, marginBottom:24 }}>{beachDesc}</p>
 
+                {/* Best days section */}
+                {(() => {
+                  const opposites = OPPOSITE_ORIENTATIONS[b.orientation as Orientation] ?? [];
+                  const goodDays = forecast
+                    .filter(d => opposites.includes(d.windDirectionLabel as Orientation) && !d.isRainy)
+                    .slice(0, 3);
+                  if (goodDays.length === 0) return null;
+                  const dayNames: Record<string, string[]> = {
+                    ca: ["Dg","Dl","Dt","Dc","Dj","Dv","Ds"],
+                    es: ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],
+                    en: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+                    fr: ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],
+                  };
+                  const monthNames: Record<string, string[]> = {
+                    ca: ["Gen","Feb","Mar","Abr","Mai","Jun","Jul","Ago","Set","Oct","Nov","Des"],
+                    es: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
+                    en: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+                    fr: ["Jan","Fév","Mar","Avr","Mai","Jui","Jul","Aoû","Sep","Oct","Nov","Déc"],
+                  };
+                  const title = lang === "ca" ? "Millors dies per visitar-la" : lang === "en" ? "Best days to visit" : lang === "fr" ? "Meilleurs jours pour visiter" : "Mejores días para visitar";
+                  return (
+                    <div style={{ marginBottom:24 }}>
+                      <div style={{ fontSize:12, fontWeight:700, textTransform:"uppercase", letterSpacing:".07em", color:"#555", marginBottom:10 }}>
+                        ✨ {title}
+                      </div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                        {goodDays.map((d, i) => {
+                          const date = new Date(d.date + "T12:00:00");
+                          const dow = dayNames[lang]?.[date.getDay()] ?? dayNames.es[date.getDay()];
+                          const month = monthNames[lang]?.[date.getMonth()] ?? monthNames.es[date.getMonth()];
+                          const windNameDay = t.windNames[d.windDirectionLabel as keyof typeof t.windNames] ?? d.windDirectionLabel;
+                          const isToday = d.date === forecast[0]?.date;
+                          return (
+                            <div key={d.date} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background: i === 0 ? "#071e20" : "#0f0f0f", border:`1.5px solid ${i === 0 ? "#0e9fa8" : "#2a2a2a"}`, borderRadius:12 }}>
+                              <div style={{ textAlign:"center", minWidth:40 }}>
+                                <div style={{ fontSize:11, color: i === 0 ? "#0e9fa8" : "#555", fontWeight:600 }}>{isToday ? (lang === "en" ? "Today" : lang === "ca" ? "Avui" : lang === "fr" ? "Auj." : "Hoy") : dow}</div>
+                                <div style={{ fontSize:18, fontWeight:800, color: i === 0 ? "#fff" : "#aaa", lineHeight:1.1 }}>{date.getDate()}</div>
+                                <div style={{ fontSize:10, color:"#555" }}>{month}</div>
+                              </div>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontSize:13, fontWeight:600, color: i === 0 ? "#fff" : "#ccc" }}>
+                                  {windNameDay} ({d.windDirectionLabel}) · {d.windspeed} km/h
+                                </div>
+                                <div style={{ fontSize:11, color:"#555", marginTop:2 }}>{d.tempMax}°C · ☀️</div>
+                              </div>
+                              {i === 0 && <div style={{ fontSize:18 }}>⭐</div>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Services */}
                 {b.services.length > 0 && b.services[0] !== "Sin servicios" && (
                   <div style={{ marginBottom:24 }}>
