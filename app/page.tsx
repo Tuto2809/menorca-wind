@@ -82,6 +82,7 @@ export default function Home() {
   const [reportSent, setReportSent] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
+  const [pushDismissed, setPushDismissed] = useState(false);
 
 
   useEffect(() => {
@@ -198,6 +199,12 @@ export default function Home() {
     if ("serviceWorker" in navigator && "Notification" in window) {
       if (Notification.permission === "granted") setPushEnabled(true);
     }
+    // Check if dismissed today
+    try {
+      const dismissed = localStorage.getItem("push_dismissed_date");
+      const today = new Date().toISOString().slice(0, 10);
+      if (dismissed === today) setPushDismissed(true);
+    } catch {}
   }, []);
 
   const sendReport = async () => {
@@ -347,23 +354,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Push banner — visible immediately on open */}
-        {!pushEnabled && (
-          <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 0 2px" }}>
-            <span style={{ fontSize:16, flexShrink:0 }}>🔔</span>
-            <div style={{ flex:1 }}>
-              <span style={{ fontSize:12, color:"#888" }}>
-                {lang === "ca" ? "Rep alertes de vent al mòbil" : lang === "en" ? "Get wind alerts on your phone" : lang === "fr" ? "Alertes vent sur votre téléphone" : "Recibe alertas de viento en el móvil"}
-              </span>
-            </div>
-            <button
-              onClick={subscribePush}
-              disabled={pushLoading}
-              style={{ flexShrink:0, padding:"6px 14px", borderRadius:8, border:"1.5px solid #0e9fa8", background:"transparent", color:"#0e9fa8", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
-              {pushLoading ? "..." : lang === "ca" ? "Activar" : lang === "en" ? "Enable" : lang === "fr" ? "Activer" : "Activar"}
-            </button>
-          </div>
-        )}
         {pushEnabled && (
           <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 0 2px" }}>
             <span style={{ fontSize:14 }}>✅</span>
@@ -517,6 +507,35 @@ export default function Home() {
                 )}
               </button>
             </div>
+
+            {/* Push notification banner — prominent, after seeing value */}
+            {!pushEnabled && !pushDismissed && beachList.length > 0 && (
+              <div style={{ background:"linear-gradient(135deg, #071e20 0%, #0a2a30 100%)", border:"1.5px solid #0e9fa8", borderRadius:16, padding:"16px", marginBottom:14, position:"relative" }}>
+                <button
+                  onClick={() => {
+                    setPushDismissed(true);
+                    try { localStorage.setItem("push_dismissed_date", new Date().toISOString().slice(0, 10)); } catch {}
+                  }}
+                  style={{ position:"absolute", top:10, right:12, background:"none", border:"none", color:"#555", fontSize:16, cursor:"pointer", lineHeight:1 }}>✕</button>
+                <div style={{ display:"flex", gap:14, alignItems:"center" }}>
+                  <div style={{ fontSize:32, flexShrink:0 }}>🔔</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#fff", marginBottom:4 }}>
+                      {lang === "ca" ? "Recomendació cada matí a les 7h" : lang === "en" ? "Daily recommendation at 7am" : lang === "fr" ? "Recommandation chaque matin à 7h" : "Recomendación cada mañana a las 7h"}
+                    </div>
+                    <div style={{ fontSize:12, color:"#0e9fa8", marginBottom:10, lineHeight:1.4 }}>
+                      {lang === "ca" ? "T'avisem quan el vent canviï i hi hagi platges perfectes" : lang === "en" ? "We'll alert you when wind changes and perfect beaches are waiting" : lang === "fr" ? "On vous alerte quand le vent change et les plages parfaites vous attendent" : "Te avisamos cuando el viento cambie y haya playas perfectas"}
+                    </div>
+                    <button
+                      onClick={subscribePush}
+                      disabled={pushLoading}
+                      style={{ padding:"9px 20px", borderRadius:9, border:"none", background:"#0e9fa8", color:"#0a0a0a", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                      {pushLoading ? "..." : lang === "ca" ? "🔔 Activar alertes gratis" : lang === "en" ? "🔔 Enable free alerts" : lang === "fr" ? "🔔 Activer les alertes" : "🔔 Activar alertas gratis"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Filter panel */}
             {showFilters && (
