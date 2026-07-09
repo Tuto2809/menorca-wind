@@ -59,6 +59,37 @@ function openMaps(lat: number, lon: number) {
   window.open(`https://maps.google.com/?q=${lat},${lon}`, "_blank");
 }
 
+function addToCalendar(beachName: string, date: string, windName: string, windDir: string, windspeed: number, tempMax: number, lat: number, lon: number) {
+  const eventDate = new Date(date + "T09:00:00");
+  const endDate = new Date(date + "T13:00:00");
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const fmt = (d: Date) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  const mapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Playas de Menorca//ES",
+    "BEGIN:VEVENT",
+    `DTSTART:${fmt(eventDate)}`,
+    `DTEND:${fmt(endDate)}`,
+    `SUMMARY:🏖️ ${beachName} — Playas de Menorca`,
+    `DESCRIPTION:💨 Viento: ${windName} (${windDir}) · ${windspeed} km/h\\n🌡️ Temperatura: ${tempMax}°C\\n📍 ${mapsUrl}\\n\\nRecomendado por Playas de Menorca\\nhttps://menorca-wind-fha3.vercel.app`,
+    `LOCATION:${beachName}\\, Menorca`,
+    `GEO:${lat};${lon}`,
+    "STATUS:CONFIRMED",
+    `UID:${Date.now()}@playasdemenorca`,
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${beachName.replace(/\s+/g, "_")}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function Home() {
   const [lang, setLang] = useState<Lang>("ca");
   const [forecast, setForecast] = useState<DayForecast[]>([]);
@@ -840,10 +871,22 @@ export default function Home() {
                   </button>
                 </div>
 
+                {/* Calendar button */}
+                {day && (
+                  <button onClick={() => addToCalendar(
+                    b.name, day.date,
+                    t.windNames[day.windDirectionLabel as keyof typeof t.windNames] ?? day.windDirectionLabel,
+                    day.windDirectionLabel, day.windspeed, day.tempMax, b.lat, b.lon
+                  )}
+                    style={{ marginTop:10, width:"100%", padding:"13px", borderRadius:14, border:"1.5px solid #2a2400", background:"#1a1500", color:"#fbbf24", fontSize:15, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                    📅 {lang === "ca" ? "Afegir a l'agenda" : lang === "en" ? "Add to calendar" : lang === "fr" ? "Ajouter au calendrier" : "Añadir a la agenda"}
+                  </button>
+                )}
+
                 {/* Report error button */}
                 <button
                   onClick={() => { setReportBeach(b.name); setReportMsg(""); setReportType("foto"); }}
-                  style={{ marginTop:16, width:"100%", padding:"8px", borderRadius:10, border:"1.5px solid #2a2a2a", background:"transparent", color:"#555", fontSize:12, cursor:"pointer" }}>
+                  style={{ marginTop:10, width:"100%", padding:"8px", borderRadius:10, border:"1.5px solid #2a2a2a", background:"transparent", color:"#555", fontSize:12, cursor:"pointer" }}>
                   ⚠️ {lang === "ca" ? "Notificar un error" : lang === "en" ? "Report an error" : lang === "fr" ? "Signaler une erreur" : "Notificar un error"}
                 </button>
               </div>
