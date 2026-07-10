@@ -552,7 +552,7 @@ export default function Home() {
                   <div style={{ fontSize:32, flexShrink:0 }}>🔔</div>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontSize:14, fontWeight:700, color:"#fff", marginBottom:4 }}>
-                      {lang === "ca" ? "Recomendació cada matí a les 7h" : lang === "en" ? "Daily recommendation at 7am" : lang === "fr" ? "Recommandation chaque matin à 7h" : "Recomendación cada mañana a las 7h"}
+                      {lang === "ca" ? "Recomanació cada matí a la teva platja perfecta" : lang === "en" ? "Daily morning recommendation for your perfect beach" : lang === "fr" ? "Recommandation chaque matin pour votre plage parfaite" : "Recomendación cada mañana para tu playa perfecta"}
                     </div>
                     <div style={{ fontSize:12, color:"#0e9fa8", marginBottom:10, lineHeight:1.4 }}>
                       {lang === "ca" ? "T'avisem quan el vent canviï i hi hagi platges perfectes" : lang === "en" ? "We'll alert you when wind changes and perfect beaches are waiting" : lang === "fr" ? "On vous alerte quand le vent change et les plages parfaites vous attendent" : "Te avisamos cuando el viento cambie y haya playas perfectas"}
