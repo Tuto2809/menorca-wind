@@ -177,17 +177,6 @@ export default function AdminPage() {
     };
     const handleSubmit = () => { if (pwd.length > 0) handleLogin({ preventDefault: () => {} } as React.FormEvent, pwd); };
 
-    // Keyboard support
-    useEffect(() => {
-      const onKey = (e: KeyboardEvent) => {
-        if (e.key >= "0" && e.key <= "9") handlePin(e.key);
-        else if (e.key === "Backspace" || e.key === "Delete") handleDel();
-        else if (e.key === "Enter") handleSubmit();
-      };
-      window.addEventListener("keydown", onKey);
-      return () => window.removeEventListener("keydown", onKey);
-    });
-
     return (
       <main style={{ minHeight:"100vh", background:S.bg, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
         <div style={{ background:S.card, border:`1.5px solid ${S.border}`, borderRadius:20, padding:"2rem 1.5rem", width:"100%", maxWidth:300 }}>
