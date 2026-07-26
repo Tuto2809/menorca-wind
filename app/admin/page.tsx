@@ -87,6 +87,27 @@ export default function AdminPage() {
 
   function logout() { sessionStorage.removeItem("admin_pwd"); setAuthed(false); setPwd(""); }
 
+  // Keyboard support for PIN — component level (React rules of hooks)
+  useEffect(() => {
+    if (authed) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key >= "0" && e.key <= "9") {
+        setPwd(prev => {
+          if (prev.length >= 6) return prev;
+          const next = prev + e.key;
+          if (next.length === 6) {
+            setTimeout(() => handleLogin({ preventDefault: () => {} } as React.FormEvent, next), 30);
+          }
+          return next;
+        });
+      } else if (e.key === "Backspace" || e.key === "Delete") {
+        setPwd(prev => prev.slice(0, -1));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [authed]);
+
   async function saveMessage(status: "draft" | "template" | "sent") {
     if (!editMsg?.title || !editMsg?.body) return;
     const method = editMsg.id ? "PUT" : "POST";
