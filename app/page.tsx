@@ -832,9 +832,13 @@ export default function Home() {
                                 <div style={{ fontSize:18, fontWeight:800, color: i === 0 ? "#fff" : "#aaa", lineHeight:1.1 }}>{date.getDate()}</div>
                                 <div style={{ fontSize:10, color:"#555" }}>{month}</div>
                               </div>
+                              {/* Big compass arrow */}
+                              <div style={{ fontSize:42, color:"#0e9fa8", lineHeight:1, flexShrink:0, width:36, textAlign:"center" }}>
+                                {COMPASS[d.windDirectionLabel] ?? "↑"}
+                              </div>
                               <div style={{ flex:1 }}>
                                 <div style={{ fontSize:13, fontWeight:600, color: i === 0 ? "#fff" : "#ccc" }}>
-                                  <span style={{ fontSize:20, color:"#0e9fa8", marginRight:4 }}>{COMPASS[d.windDirectionLabel] ?? "↑"}</span>{windNameDay} ({d.windDirectionLabel}) · {d.windspeed} km/h
+                                  {windNameDay} ({d.windDirectionLabel}) · {d.windspeed} km/h
                                 </div>
                                 <div style={{ fontSize:11, color:"#555", marginTop:2 }}>{d.tempMax}°C · ☀️</div>
                               </div>
