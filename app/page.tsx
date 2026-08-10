@@ -834,7 +834,7 @@ export default function Home() {
                               </div>
                               <div style={{ flex:1 }}>
                                 <div style={{ fontSize:13, fontWeight:600, color: i === 0 ? "#fff" : "#ccc" }}>
-                                  {COMPASS[d.windDirectionLabel] ?? "↑"} {windNameDay} ({d.windDirectionLabel}) · {d.windspeed} km/h
+                                  <span style={{ fontSize:20, color:"#0e9fa8", marginRight:4 }}>{COMPASS[d.windDirectionLabel] ?? "↑"}</span>{windNameDay} ({d.windDirectionLabel}) · {d.windspeed} km/h
                                 </div>
                                 <div style={{ fontSize:11, color:"#555", marginTop:2 }}>{d.tempMax}°C · ☀️</div>
                               </div>
