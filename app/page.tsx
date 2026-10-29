@@ -785,10 +785,38 @@ export default function Home() {
                   ✕
                 </button>
                 {/* Beach name over photo */}
-                <div style={{ position:"absolute", bottom:16, left:16, right:16 }}>
+                <div style={{ position:"absolute", bottom:16, left:16, right:80 }}>
                   <div style={{ fontSize:24, fontWeight:800, color:"#fff", lineHeight:1.2 }}>{b.name}</div>
                   <div style={{ fontSize:14, color:"rgba(255,255,255,0.7)", marginTop:4 }}>{b.municipality}</div>
                 </div>
+                {/* Medusas badge — bottom right over photo */}
+                {(() => {
+                  const BADGE_COLORS: Record<number, { bg: string; color: string; border: string }> = {
+                    0: { bg: "rgba(0,0,0,0.6)", color: "#888", border: "rgba(255,255,255,0.12)" },
+                    1: { bg: "rgba(7,30,10,0.88)", color: "#22c55e", border: "rgba(34,197,94,0.35)" },
+                    2: { bg: "rgba(26,18,0,0.88)", color: "#f59e0b", border: "rgba(245,158,11,0.35)" },
+                    3: { bg: "rgba(26,8,0,0.88)", color: "#f97316", border: "rgba(249,115,22,0.35)" },
+                    4: { bg: "rgba(32,4,8,0.88)", color: "#ef4444", border: "rgba(239,68,68,0.35)" },
+                  };
+                  const BADGE_ICONS = ["🪼", "✅", "⚠️", "🚨", "🚨"];
+                  const BADGE_LABEL_ES = ["Sin datos", "Sin medusas", "Alguna", "Medusas", "Muchas"];
+                  const BADGE_LABEL_EN = ["No data", "Clear", "A few", "Present", "Many"];
+                  const BADGE_LABEL_CA = ["Sense dades", "Netes", "Alguna", "Meduses", "Moltes"];
+                  const BADGE_LABEL_FR = ["Sans données", "Libres", "Quelques", "Présentes", "Beaucoup"];
+                  const nivel = medusaData?.nivel ?? 0;
+                  const bc = BADGE_COLORS[nivel] ?? BADGE_COLORS[0];
+                  const blabel = lang === "ca" ? BADGE_LABEL_CA[nivel] : lang === "en" ? BADGE_LABEL_EN[nivel] : lang === "fr" ? BADGE_LABEL_FR[nivel] : BADGE_LABEL_ES[nivel];
+                  const titleLabel = lang === "ca" ? "Meduses" : lang === "en" ? "Jellyfish" : lang === "fr" ? "Méduses" : "Medusas";
+                  return (
+                    <div style={{ position:"absolute", bottom:16, right:16, background:bc.bg, border:`1px solid ${bc.border}`, borderRadius:10, padding:"6px 10px", display:"flex", alignItems:"center", gap:6, backdropFilter:"blur(8px)" }}>
+                      <span style={{ fontSize:18 }}>{medusaLoading ? "🪼" : BADGE_ICONS[nivel]}</span>
+                      <div>
+                        <div style={{ fontSize:9, fontWeight:700, textTransform:"uppercase", letterSpacing:".06em", color:"rgba(255,255,255,0.4)", lineHeight:1 }}>{titleLabel} · 48h</div>
+                        <div style={{ fontSize:12, fontWeight:700, color:bc.color, lineHeight:1.3, marginTop:1 }}>{medusaLoading ? "…" : blabel}</div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Content */}
@@ -807,57 +835,6 @@ export default function Home() {
                     </span>
                   )}
                 </div>
-
-                {/* Medusas indicator */}
-                {(() => {
-                  const MEDUSA_COLORS: Record<number, { bg: string; border: string; color: string }> = {
-                    0: { bg: "#1a1a1a", border: "#2a2a2a", color: "#666" },
-                    1: { bg: "#071e0a", border: "#0e4420", color: "#22c55e" },
-                    2: { bg: "#1a1200", border: "#3a2800", color: "#f59e0b" },
-                    3: { bg: "#1a0800", border: "#3a1400", color: "#f97316" },
-                    4: { bg: "#200408", border: "#480a18", color: "#ef4444" },
-                  };
-                  const MEDUSA_ICONS = ["🪼", "✅", "⚠️", "🚨", "🚨"];
-                  const MEDUSA_LABEL_ES = ["Desconocido", "Sin medusas", "Alguna medusa", "Medusas presentes", "Alta presencia"];
-                  const MEDUSA_LABEL_EN = ["Unknown", "No jellyfish", "A few jellyfish", "Jellyfish present", "High presence"];
-                  const MEDUSA_LABEL_CA = ["Desconegut", "Sense meduses", "Alguna medusa", "Meduses presents", "Alta presència"];
-                  const MEDUSA_LABEL_FR = ["Inconnu", "Sans méduses", "Quelques méduses", "Méduses présentes", "Forte présence"];
-                  const URTI_LABEL_ES = ["", "No urticante", "Poco urticante", "Urticante", "Muy urticante"];
-                  const titleLabel = lang === "ca" ? "Meduses" : lang === "en" ? "Jellyfish" : lang === "fr" ? "Méduses" : "Medusas";
-                  const nivel = medusaData?.nivel ?? 0;
-                  const style = MEDUSA_COLORS[nivel] ?? MEDUSA_COLORS[0];
-                  const icon = MEDUSA_ICONS[nivel];
-                  const label = lang === "ca" ? MEDUSA_LABEL_CA[nivel] : lang === "en" ? MEDUSA_LABEL_EN[nivel] : lang === "fr" ? MEDUSA_LABEL_FR[nivel] : MEDUSA_LABEL_ES[nivel];
-                  const textoDetalle = lang === "ca" ? medusaData?.textoCA : lang === "en" ? medusaData?.textoEN : lang === "fr" ? medusaData?.textoFR : medusaData?.textoES;
-                  return (
-                    <div style={{ marginBottom:16 }}>
-                      <div style={{ padding:"12px 16px", borderRadius:14, background:style.bg, border:`1.5px solid ${style.border}`, display:"flex", alignItems:"center", gap:12 }}>
-                        {medusaLoading ? (
-                          <div style={{ fontSize:13, color:"#555" }}>…</div>
-                        ) : (
-                          <>
-                            <div style={{ fontSize:24, flexShrink:0 }}>{icon}</div>
-                            <div style={{ flex:1 }}>
-                              <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:".07em", color:"#555", marginBottom:2 }}>🪼 {titleLabel} · 48h</div>
-                              <div style={{ fontSize:14, fontWeight:700, color:style.color }}>{label}</div>
-                              {textoDetalle && nivel > 0 && (
-                                <div style={{ fontSize:12, color:"#888", marginTop:2 }}>{textoDetalle}</div>
-                              )}
-                              {medusaData?.urticancia && medusaData.urticancia >= 2 && (
-                                <div style={{ fontSize:11, color:"#f97316", marginTop:2 }}>⚡ {URTI_LABEL_ES[medusaData.urticancia]}</div>
-                              )}
-                              {medusaData?.ultimaFecha && (
-                                <div style={{ fontSize:10, color:"#555", marginTop:2 }}>
-                                  {lang === "ca" ? "Últim avistament:" : lang === "en" ? "Last sighting:" : lang === "fr" ? "Dernier signalement:" : "Último avistamiento:"} {medusaData.ultimaFecha.slice(0, 10)}
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
 
                 {/* Description */}
                 <p style={{ fontSize:16, color:"#ccc", lineHeight:1.65, marginBottom:24 }}>{beachDesc}</p>
