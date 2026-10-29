@@ -808,6 +808,57 @@ export default function Home() {
                   )}
                 </div>
 
+                {/* Medusas indicator */}
+                {(() => {
+                  const MEDUSA_COLORS: Record<number, { bg: string; border: string; color: string }> = {
+                    0: { bg: "#1a1a1a", border: "#2a2a2a", color: "#666" },
+                    1: { bg: "#071e0a", border: "#0e4420", color: "#22c55e" },
+                    2: { bg: "#1a1200", border: "#3a2800", color: "#f59e0b" },
+                    3: { bg: "#1a0800", border: "#3a1400", color: "#f97316" },
+                    4: { bg: "#200408", border: "#480a18", color: "#ef4444" },
+                  };
+                  const MEDUSA_ICONS = ["🪼", "✅", "⚠️", "🚨", "🚨"];
+                  const MEDUSA_LABEL_ES = ["Desconocido", "Sin medusas", "Alguna medusa", "Medusas presentes", "Alta presencia"];
+                  const MEDUSA_LABEL_EN = ["Unknown", "No jellyfish", "A few jellyfish", "Jellyfish present", "High presence"];
+                  const MEDUSA_LABEL_CA = ["Desconegut", "Sense meduses", "Alguna medusa", "Meduses presents", "Alta presència"];
+                  const MEDUSA_LABEL_FR = ["Inconnu", "Sans méduses", "Quelques méduses", "Méduses présentes", "Forte présence"];
+                  const URTI_LABEL_ES = ["", "No urticante", "Poco urticante", "Urticante", "Muy urticante"];
+                  const titleLabel = lang === "ca" ? "Meduses" : lang === "en" ? "Jellyfish" : lang === "fr" ? "Méduses" : "Medusas";
+                  const nivel = medusaData?.nivel ?? 0;
+                  const style = MEDUSA_COLORS[nivel] ?? MEDUSA_COLORS[0];
+                  const icon = MEDUSA_ICONS[nivel];
+                  const label = lang === "ca" ? MEDUSA_LABEL_CA[nivel] : lang === "en" ? MEDUSA_LABEL_EN[nivel] : lang === "fr" ? MEDUSA_LABEL_FR[nivel] : MEDUSA_LABEL_ES[nivel];
+                  const textoDetalle = lang === "ca" ? medusaData?.textoCA : lang === "en" ? medusaData?.textoEN : lang === "fr" ? medusaData?.textoFR : medusaData?.textoES;
+                  return (
+                    <div style={{ marginBottom:16 }}>
+                      <div style={{ padding:"12px 16px", borderRadius:14, background:style.bg, border:`1.5px solid ${style.border}`, display:"flex", alignItems:"center", gap:12 }}>
+                        {medusaLoading ? (
+                          <div style={{ fontSize:13, color:"#555" }}>…</div>
+                        ) : (
+                          <>
+                            <div style={{ fontSize:24, flexShrink:0 }}>{icon}</div>
+                            <div style={{ flex:1 }}>
+                              <div style={{ fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:".07em", color:"#555", marginBottom:2 }}>🪼 {titleLabel} · 48h</div>
+                              <div style={{ fontSize:14, fontWeight:700, color:style.color }}>{label}</div>
+                              {textoDetalle && nivel > 0 && (
+                                <div style={{ fontSize:12, color:"#888", marginTop:2 }}>{textoDetalle}</div>
+                              )}
+                              {medusaData?.urticancia && medusaData.urticancia >= 2 && (
+                                <div style={{ fontSize:11, color:"#f97316", marginTop:2 }}>⚡ {URTI_LABEL_ES[medusaData.urticancia]}</div>
+                              )}
+                              {medusaData?.ultimaFecha && (
+                                <div style={{ fontSize:10, color:"#555", marginTop:2 }}>
+                                  {lang === "ca" ? "Últim avistament:" : lang === "en" ? "Last sighting:" : lang === "fr" ? "Dernier signalement:" : "Último avistamiento:"} {medusaData.ultimaFecha.slice(0, 10)}
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Description */}
                 <p style={{ fontSize:16, color:"#ccc", lineHeight:1.65, marginBottom:24 }}>{beachDesc}</p>
 
@@ -880,59 +931,6 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-
-                {/* Medusas indicator */}
-                {(() => {
-                  const MEDUSA_COLORS: Record<number, { bg: string; border: string; color: string }> = {
-                    0: { bg: "#1a1a1a", border: "#2a2a2a", color: "#666" },
-                    1: { bg: "#071e0a", border: "#0e4420", color: "#22c55e" },
-                    2: { bg: "#1a1200", border: "#3a2800", color: "#f59e0b" },
-                    3: { bg: "#1a0800", border: "#3a1400", color: "#f97316" },
-                    4: { bg: "#200408", border: "#480a18", color: "#ef4444" },
-                  };
-                  const MEDUSA_ICONS = ["🪼", "✅", "⚠️", "🚨", "🚨"];
-                  const MEDUSA_LABEL_ES = ["Desconocido", "Sin medusas", "Alguna medusa", "Medusas presentes", "Alta presencia"];
-                  const MEDUSA_LABEL_EN = ["Unknown", "No jellyfish", "A few jellyfish", "Jellyfish present", "High presence"];
-                  const MEDUSA_LABEL_CA = ["Desconegut", "Sense meduses", "Alguna medusa", "Meduses presents", "Alta presència"];
-                  const MEDUSA_LABEL_FR = ["Inconnu", "Sans méduses", "Quelques méduses", "Méduses présentes", "Forte présence"];
-                  const URTI_LABEL_ES = ["", "No urticante", "Poco urticante", "Urticante", "Muy urticante"];
-                  const titleLabel = lang === "ca" ? "Meduses" : lang === "en" ? "Jellyfish" : lang === "fr" ? "Méduses" : "Medusas";
-                  const nivel = medusaData?.nivel ?? 0;
-                  const style = MEDUSA_COLORS[nivel] ?? MEDUSA_COLORS[0];
-                  const icon = MEDUSA_ICONS[nivel];
-                  const label = lang === "ca" ? MEDUSA_LABEL_CA[nivel] : lang === "en" ? MEDUSA_LABEL_EN[nivel] : lang === "fr" ? MEDUSA_LABEL_FR[nivel] : MEDUSA_LABEL_ES[nivel];
-                  const textoDetalle = lang === "ca" ? medusaData?.textoCA : lang === "en" ? medusaData?.textoEN : lang === "fr" ? medusaData?.textoFR : medusaData?.textoES;
-                  return (
-                    <div style={{ marginBottom:24 }}>
-                      <div style={{ fontSize:12, fontWeight:700, textTransform:"uppercase", letterSpacing:".07em", color:"#555", marginBottom:10 }}>
-                        🪼 {titleLabel} · 48h
-                      </div>
-                      <div style={{ padding:"12px 16px", borderRadius:14, background:style.bg, border:`1.5px solid ${style.border}`, display:"flex", alignItems:"center", gap:12 }}>
-                        {medusaLoading ? (
-                          <div style={{ fontSize:13, color:"#555" }}>…</div>
-                        ) : (
-                          <>
-                            <div style={{ fontSize:28, flexShrink:0 }}>{icon}</div>
-                            <div style={{ flex:1 }}>
-                              <div style={{ fontSize:14, fontWeight:700, color:style.color }}>{label}</div>
-                              {textoDetalle && nivel > 0 && (
-                                <div style={{ fontSize:12, color:"#888", marginTop:2 }}>{textoDetalle}</div>
-                              )}
-                              {medusaData?.urticancia && medusaData.urticancia >= 2 && (
-                                <div style={{ fontSize:11, color:"#f97316", marginTop:2 }}>⚡ {URTI_LABEL_ES[medusaData.urticancia]}</div>
-                              )}
-                              {medusaData?.ultimaFecha && (
-                                <div style={{ fontSize:10, color:"#555", marginTop:2 }}>
-                                  {lang === "ca" ? "Últim avistament:" : lang === "en" ? "Last sighting:" : lang === "fr" ? "Dernier signalement:" : "Último avistamiento:"} {medusaData.ultimaFecha.slice(0, 10)}
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
 
                 {/* Action buttons */}
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
