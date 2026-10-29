@@ -120,6 +120,7 @@ export default function Home() {
     ultimaFecha: string | null; especie: string | null; urticancia: number; avistamientos: number;
   } | null>(null);
   const [medusaLoading, setMedusaLoading] = useState(false);
+  const [medusaGlobal, setMedusaGlobal] = useState<{ nivel: number } | null>(null);
 
 
   useEffect(() => {
@@ -135,6 +136,12 @@ export default function Home() {
         (d.beaches ?? []).forEach((b: {name:string;photo?:string;description?:string}) => { map[b.name] = b; });
         setBeachOverrides(map);
       }).catch(() => {});
+
+    // Global jellyfish status for beach list (center of Menorca)
+    fetch("/api/medusas?lat=39.97&lon=3.97")
+      .then(r => r.json())
+      .then(d => setMedusaGlobal({ nivel: d.nivel ?? 0 }))
+      .catch(() => {});
 
   }, []);
 
@@ -670,6 +677,23 @@ export default function Home() {
                           return (
                             <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, fontWeight:600, border:"1.5px solid transparent", background:"#1a1a1a", color:occ.color, borderColor:"#2a2a2a" }}>
                               {"👥 "}{occLabel}
+                            </span>
+                          );
+                        })()}
+                        {medusaGlobal !== null && (() => {
+                          const MICONS = ["🪼","✅","⚠️","🚨","🚨"];
+                          const MCOLORS = ["#555","#22c55e","#f59e0b","#f97316","#ef4444"];
+                          const MLABEL: Record<string,string[]> = {
+                            es:["Sin datos","Sin medusas","Alguna","Medusas","Muchas"],
+                            ca:["Sense dades","Netes","Alguna","Meduses","Moltes"],
+                            en:["No data","Clear","A few","Present","Many"],
+                            fr:["Sans données","Libres","Quelques","Présentes","Beaucoup"],
+                          };
+                          const n = medusaGlobal.nivel;
+                          const lbl = (MLABEL[lang] ?? MLABEL.es)[n];
+                          return (
+                            <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, fontWeight:600, background:"#1a1a1a", color:MCOLORS[n], border:"1.5px solid #2a2a2a" }}>
+                              {MICONS[n]} {lbl}
                             </span>
                           );
                         })()}
